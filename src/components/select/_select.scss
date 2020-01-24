@@ -1,0 +1,194 @@
+.marvin-select {
+  min-width: 120px;
+  min-height: 36px;
+  border: 0;
+  display: flex;
+  padding: 0;
+  position: relative;
+  margin: 0.8em;
+  flex-direction: column;
+  flex-grow: 1;
+//color
+
+  .marvin-select-content {
+    outline: none;
+  }
+
+  .marvin-select-list-box {
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    position: absolute;
+    top:-32px;
+    left: 0;
+  }
+
+  .marvin-select-list {
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    max-height: 136px;
+    overflow-y: scroll;
+    //background-color
+    i {
+      color: $primary-color;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+  }
+
+  .marvin-select-list-item {
+    display: flex;
+    padding: 8px 20px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    align-items: baseline;
+    font-size: 16px;
+    line-height: 16px;
+    width: 100%;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      background-color: rgba(0, 150, 94, 0.4);
+      color: $white;
+      cursor: pointer;
+      i {
+        color: $white;
+      }
+    }
+
+    &.selected {
+      background-color: $primary-color;
+      color: $white;
+      i {
+        color: $white;
+      }
+    }
+  }
+
+  .marvin-select-selected-items {
+    display: flex;
+    flex-flow: wrap;
+    padding-right: 32px;
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      i {
+        color: $primary-color;
+        margin-right: 6px;
+        font-size: 16px;
+      }
+      &:last-child {
+        margin: 0 ;
+      }
+
+      &.disabled {
+        color: $medium-gray;
+        i {
+          color: $medium-gray;
+        }
+      }
+
+      &.multiple {
+        background-color: $dark-gray;
+        color: $white;
+        font-size: 16px;
+        padding: 3px 8px;
+        border-radius: 50px;
+        margin: 2px 4px 4px 0;
+        i {
+          color: $white;
+        }
+
+        &.disabled {
+          background-color: $medium-gray;
+          color: $light-gray;
+        }
+      }
+    }
+  }
+
+  label {
+    transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+    touch-action: manipulation;
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: translate(0, 15px) scale(1.2);
+    transform-origin: left bottom;
+    font-size: 16px;
+    white-space: nowrap;
+    text-transform: lowercase;
+
+    &.shrink {
+      transform: translate(0, -7px) scale(1);
+      color: $primary-color;
+    }
+  }
+
+  .marvin-select-arrow {
+    top: calc(50% - 12px);
+    right: 0;
+    //color
+    position: absolute;
+    pointer-events: none;
+    fill: currentColor;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    font-size: 24px;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  &.shrink {
+    .marvin-select-wrapper:after {
+      transform: scaleX(1);
+    }
+  }
+
+  .marvin-select-container {
+    width: 100%;
+    position: relative;
+  }
+
+  .marvin-select-wrapper {
+    display: flex;
+    align-items: baseline;
+    position: relative;
+    border-bottom: 1px solid $medium-gray;
+
+    &:after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "";
+      position: absolute;
+      transform: scaleX(0);
+      transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+      pointer-events: none;
+    }
+
+    &:before {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "\00a0";
+      position: absolute;
+      transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      pointer-events: none;
+    }
+
+  }
+}

@@ -1,0 +1,17 @@
+.marvin-menu-backdrop {
+  display: none;
+
+  &.open {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 120%;
+    height: 120%;
+    z-index: 998;
+  }
+
+  &.visible {
+    background-color: rgba(0,0,0,0.45);
+  }
+}

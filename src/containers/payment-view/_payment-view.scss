@@ -1,0 +1,97 @@
+#payment-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  width: 100%;
+  padding: 20px;
+  background-color: $light-gray;
+
+  .box-header {
+    display: flex;
+    width: 100%;
+    padding-bottom: 20px;
+  }
+  .box-content {
+    background-color: $smooth-gray;
+    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.20);
+    padding: 10px;
+    margin-top: -100px;
+    width: 400px;
+    height: 500px;
+
+    h3 {
+      margin-left: 20px;
+      text-transform: uppercase;
+      color: $primary-color;
+      font-size: 20px;
+    }
+    &.success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: $primary-color;
+      i {
+        font-size: 60px;
+      }
+    }
+    &.failure {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: $red;
+      i {
+        font-size: 60px;
+      }
+    }
+  }
+
+  .back-btn {
+    border: none;
+    background: none;
+    color: $primary-color;
+    font-size: 24px;
+  }
+  .payment-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .make-payment-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    border: 1px solid $primary-color;
+    background: none;
+    color: $primary-color;
+    font-size: 16px;
+    padding: 10px 10px;
+    margin: 20px 3px 3px 3px;
+    i {
+      font-size: 20px;
+      margin-right: 6px;
+    }
+    &:hover {
+      cursor: pointer;
+      border: none;
+      background-color: $primary-color;
+      color: $white;
+    }
+    &:disabled {
+      background-color: $light-gray;
+      color: $black;
+      border: none;
+      cursor: not-allowed;
+    }
+  }
+}
+.payment-success-message {
+  color: $primary-color;
+  text-align: center;
+  font-size: 20px;
+}

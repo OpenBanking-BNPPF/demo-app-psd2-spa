@@ -1,0 +1,114 @@
+#transactions-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  width: 100%;
+  padding: 20px;
+  background-color: $light-gray;
+
+  .box-header {
+    display: flex;
+    width: 100%;
+    padding-bottom: 20px;
+  }
+  .box-content {
+    background-color: $smooth-gray;
+    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.20);
+    padding: 10px;
+    margin-top: -100px;
+    width: 400px;
+    height: 500px;
+
+    h3 {
+      margin-left: 20px;
+      text-transform: uppercase;
+      color: $primary-color;
+      font-size: 20px;
+    }
+  }
+  .account-id {
+    color: $dark-gray;
+    font-size: 20px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .back-btn {
+    border: none;
+    background: none;
+    color: $primary-color;
+    font-size: 24px;
+  }
+  .transactions-view {
+    width: 100%;
+    margin-top: -40px;
+  }
+  .transaction-list {
+    width: 100%;
+    height: 300px;
+    overflow-y: scroll;
+    li {
+      width: 100%;
+    }
+  }
+  .my-transactions {
+    color: $medium-gray;
+    margin-bottom: 10px;
+    i {
+      color: $primary-color;
+      font-size: 22px;
+      margin-right: 8px;
+    }
+  }
+  .transactions-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $white;
+    padding: 10px;
+    margin-bottom: 4px;
+  }
+  .transaction-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $medium-gray;
+    text-transform: uppercase;
+  }
+  .transaction-month {
+    font-size: 10px;
+  }
+  .transaction-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 0 10px;
+  }
+  .transaction-value {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+  }
+  .transaction-amount {
+    font-size: 16px;
+    color: $black;
+    margin-right: 8px;
+  }
+  .transaction-currency {
+    font-size: 10px;
+    color: $medium-gray;
+  }
+  .transaction-remittance {
+    color: $primary-color;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  .transaction-reference {
+    color: $medium-gray;
+    font-size: 12px;
+  }
+}
