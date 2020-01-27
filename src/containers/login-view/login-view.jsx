@@ -12,8 +12,12 @@ export default class LoginView extends React.Component {
         }
     }
 
+    componentWillUnmount(){
+        if(this.loginSub) this.loginSub.unsubscribe()
+    }
+
     componentWillMount() {
-        authService.login().subscribe(
+        this.loginSub = authService.login().subscribe(
             resp => {
                 this.loginURL = resp;
                 this.setState({isLoading: false})
@@ -22,8 +26,9 @@ export default class LoginView extends React.Component {
         )
     }
 
-    login() {
-        window.location = this.loginURL
+    login(brand) {
+        authService.selectBrand(brand)
+        window.location = `${this.loginURL}&brand=${brand}`
     }
 
     render() {
@@ -33,7 +38,13 @@ export default class LoginView extends React.Component {
         } else {
             return (
                 <div id="login-view-container">
-                    <button onClick={this.login.bind(this)}>
+                    <button onClick={this.login.bind(this, 'bnppf')}>
+                        <i className="icofont icofont-login"/>
+                    </button>
+                    <button onClick={this.login.bind(this, 'hb')}>
+                        <i className="icofont icofont-login"/>
+                    </button>
+                    <button onClick={this.login.bind(this, 'fintro')}>
                         <i className="icofont icofont-login"/>
                     </button>
                     <span>This will redirect you to the authorization server of your organization</span>

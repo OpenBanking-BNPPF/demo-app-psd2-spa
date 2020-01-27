@@ -1,7 +1,23 @@
 import { getText } from '../../helpers/reactive-api-client/reactive-api-client';
 import { tap, map } from 'rxjs/operators';
+import { Subject } from 'rxjs/internal/Subject';
 
 class AuthService {
+
+    constructor(){
+        console.log('New AuthService')
+        this.brandSubject = new Subject()
+    }
+
+    selectBrand(brand){
+        console.log('select brand=',brand)
+        localStorage.setItem('brand', brand)
+        this.brandSubject.next(brand)
+    }
+
+    getBrand(){
+        return localStorage.getItem('brand')
+    }
 
     login() {
         return getText(`/api/auth/login`)

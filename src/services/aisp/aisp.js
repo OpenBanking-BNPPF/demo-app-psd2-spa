@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { getJson } from '../../helpers/reactive-api-client/reactive-api-client';
 import { map } from 'rxjs/operators';
 import { apiService } from "../apis/apis";
+import { authService } from "../auth/auth-service";
 
 class AISPService {
 
@@ -11,7 +12,8 @@ class AISPService {
      * @return {Observable} accounts
      */
     getAccounts() {
-        return getJson(`/api/accounts`)
+        console.log(`/api/accounts?brand=${authService.getBrand()}`)
+        return getJson(`/api/accounts?brand=${authService.getBrand()}`)
     }
 
     /**
