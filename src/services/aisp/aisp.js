@@ -12,7 +12,6 @@ class AISPService {
      * @return {Observable} accounts
      */
     getAccounts() {
-        console.log(`/api/accounts?brand=${authService.getBrand()}`)
         return getJson(`/api/accounts?brand=${authService.getBrand()}`)
     }
 

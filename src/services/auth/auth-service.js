@@ -5,12 +5,10 @@ import { Subject } from 'rxjs/internal/Subject';
 class AuthService {
 
     constructor(){
-        console.log('New AuthService')
         this.brandSubject = new Subject()
     }
 
     selectBrand(brand){
-        console.log('select brand=',brand)
         localStorage.setItem('brand', brand)
         this.brandSubject.next(brand)
     }

@@ -20,12 +20,11 @@ export default class LandingView extends React.Component {
 
     componentWillMount() {
         const brand = authService.getBrand()
-        console.log('landing brand =', brand)
         const authorizationCode = queryString.parse(this.props.location.search).code;
         authService.getToken(authorizationCode).subscribe(
             () => {
                 this.setState({isLoading: false});
-                this.redirect(`/accounts?brand=${brand}`)
+                this.redirect('/accounts')
             }
         )
     }

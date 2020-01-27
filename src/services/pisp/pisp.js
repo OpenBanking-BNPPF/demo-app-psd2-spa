@@ -1,4 +1,5 @@
 import { getJson, getText } from '../../helpers/reactive-api-client/reactive-api-client';
+import { authService } from "../auth/auth-service";
 
 class PISPService {
 
@@ -11,7 +12,7 @@ class PISPService {
             method: 'POST',
             body
         };
-        return getText(`/api/payment/make`, options)
+        return getText(`/api/payment/make?brand=${authService.getBrand()}`, options)
     }
 }
 
