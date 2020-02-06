@@ -12,7 +12,7 @@ export class ReactiveApiClient {
         const accessToken = sessionStorage.getItem('accessToken');
         //const searchPattern = new RegExp('^/api/', 'i');
         if (accessToken) {
-            options.headers['Authorization'] = `bearer ${accessToken}`;
+            options.headers['Authorization'] = `Bearer ${accessToken}`;
         }
         return ajax(options).pipe(
             map(data => data.response)
