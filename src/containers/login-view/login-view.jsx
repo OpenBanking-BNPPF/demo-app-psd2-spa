@@ -43,9 +43,9 @@ export default class LoginView extends React.Component {
       return (
         <div>
           <div id='login-view-container'>
-            <button onClick={this.login.bind(this, 'bnppf')} style={{backgroundImage: "url('./assets/bnppf_logo.png')"}}></button>
-            <button onClick={this.login.bind(this, 'hb')}  style={{backgroundImage: "url('./assets/hellobank_logo.png')"}}></button>
-            <button onClick={this.login.bind(this, 'fintro')}  style={{backgroundImage: "url('./assets/fintro_logo.png')"}}></button>
+            <a><img src="./assets/bnppf_logo.png" alt="bnppf" onClick={this.login.bind(this, 'bnppf')} /></a>
+            <img src="./assets/hellobank_logo.png" alt="hello" onClick={this.login.bind(this, 'hb')} />
+            <img src="./assets/fintro_logo.png" alt="fintro" onClick={this.login.bind(this, 'fintro')} />
           </div>
           <p className='text'>This will redirect you to the authorization server of your organization</p>
         </div>
