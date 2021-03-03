@@ -99,7 +99,7 @@ export default class PaymentView extends React.Component {
                     <div className="box-header">
                         <button className="back-btn"
                                 onClick={this.redirect.bind(this, '/accounts')}><i
-                            className="icofont icofont-reply"/></button>
+                            className="icofont icofont-reply"/>back</button>
                         <h3>NEW TRANSFER</h3>
                     </div>
                     <form className="payment-form">

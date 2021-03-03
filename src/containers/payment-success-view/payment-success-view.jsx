@@ -18,6 +18,7 @@ export default class PaymentSuccessView extends React.Component {
                     <button className="back-btn"
                             onClick={this.redirect.bind(this, '/accounts')}>
                         <i className="icofont icofont-reply"/>
+                        back
                     </button>
                 </div>
             </div>

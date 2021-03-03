@@ -6,6 +6,7 @@ const extractStyle = new MiniCssExtractPlugin({
     filename: "style.css",
     disable: false
 });
+console.log('devMode=' + devMode)
 
 module.exports = {
     entry: ['@babel/polyfill', './src/index.jsx'],
@@ -85,7 +86,7 @@ module.exports = {
         contentBase: path.join(__dirname, "build"),
         proxy: {
             '/api/**': {
-                target: 'http://localhost:3000/'
+                target: 'http://localhost:8081/'
             }
         }
     }

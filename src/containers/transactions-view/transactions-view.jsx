@@ -167,7 +167,7 @@ export default class TransactionsView extends React.Component {
                 <div className="box-content">
                     <div className="box-header">
                         <button className="back-btn" onClick={this.redirect.bind(this, '/accounts')}><i
-                            className="icofont icofont-reply"/></button>
+                            className="icofont icofont-reply"/>back</button>
                         <h3>
                             {formatter.formatIBAN(this.accountId.substring(0, this.accountId.length - 3))}
                         </h3>
