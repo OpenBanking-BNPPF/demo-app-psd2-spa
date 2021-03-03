@@ -12,7 +12,7 @@ class AISPService {
      * @return {Observable} accounts
      */
     getAccounts() {
-        return getJson(`/api/accounts?brand=${authService.getBrand()}`)
+        return getJson(`http://localhost:8081/api/accounts?brand=${authService.getBrand()}`)
     }
 
     /**
@@ -34,11 +34,11 @@ class AISPService {
     }
 
     getBalances(accountId) {
-        return getJson(`/api/accounts/balances?accountResourceId=${accountId}`);
+        return getJson(`http://localhost:8081/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`);
     }
 
     getTransactions(accountId) {
-        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}`);
+        return getJson(`http://localhost:8081/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`);
     }
 
 }
