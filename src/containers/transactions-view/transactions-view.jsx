@@ -43,7 +43,7 @@ export default class TransactionsView extends React.Component {
             transactions => {
                 this.transactions = transactions;
                 this.transactions.sort((t1, t2) => t2.bookingDate.localeCompare(t1.bookingDate));
-                this.setState({filteredItems: this.transactions});
+                this.setState({ filteredItems: this.transactions });
 
                 this.setState({
                     isLoading: false,
@@ -71,7 +71,11 @@ export default class TransactionsView extends React.Component {
     }
 
     renderTransaction(item) {
-        const {searchTerm} = this.state;
+        const { searchTerm } = this.state;
+        let remittanceInformation
+        if (item.remittanceInformation.unstructured) {
+            remittanceInformation = item.remittanceInformation.unstructured[0]
+        }
         return (
             <div className="transactions-item">
                 <div className="transaction-date">
@@ -80,19 +84,19 @@ export default class TransactionsView extends React.Component {
                 </div>
                 <div className="transaction-info">
                     <span className="transaction-remittance">
-                        <Highlight textToHighlight={item.remittanceInformation[0]}
-                                   termToHighlight={searchTerm}/>
-                        </span>
+                        <Highlight textToHighlight={remittanceInformation}
+                            termToHighlight={searchTerm} />
+                    </span>
                     <span className="transaction-reference">
                         <Highlight textToHighlight={item.entryReference}
-                                   termToHighlight={searchTerm}/>
-                        </span>
+                            termToHighlight={searchTerm} />
+                    </span>
                 </div>
                 <div className="transaction-value">
                     <span className="transaction-amount">
                         <Highlight textToHighlight={formatter.formatAmount(+item.transactionAmount.amount)}
-                                   termToHighlight={searchTerm}/>
-                        </span>
+                            termToHighlight={searchTerm} />
+                    </span>
                     <span className="transaction-currency">{item.transactionAmount.currency}</span>
                 </div>
             </div>
@@ -104,7 +108,7 @@ export default class TransactionsView extends React.Component {
             searchTerm: term
         });
         if (term.trim() === '') {
-            this.setState({filteredItems: this.transactions});
+            this.setState({ filteredItems: this.transactions });
         } else {
             const filteredItems = this.transactions.filter(
                 item => {
@@ -112,24 +116,24 @@ export default class TransactionsView extends React.Component {
                         || item.remittanceInformation[0].toLowerCase().indexOf(term.toLowerCase()) > -1
                         || item.entryReference.toLowerCase().indexOf(term.toLowerCase()) > -1
                 });
-            this.setState({filteredItems: filteredItems});
+            this.setState({ filteredItems: filteredItems });
         }
     }
 
     renderTransactions() {
-        const {filteredItems, searchTerm} = this.state;
+        const { filteredItems, searchTerm } = this.state;
         if (this.transactions && this.transactions.length > 0) {
             return (
                 <div className="transactions-view">
                     <SearchBox value={searchTerm}
-                               placeholder="filter transactions"
-                               handleClear={() => this.setState({
-                                   searchTerm: '',
-                                   filteredItems: this.transactions
-                               })}
-                               handleChange={(e) => this.freeSearch(e.target.value)}/>
+                        placeholder="filter transactions"
+                        handleClear={() => this.setState({
+                            searchTerm: '',
+                            filteredItems: this.transactions
+                        })}
+                        handleChange={(e) => this.freeSearch(e.target.value)} />
                     <div className="my-transactions">
-                        <i className="icofont icofont-exchange"/>
+                        <i className="icofont icofont-exchange" />
                         My Transactions {` (${filteredItems.length})`}
                     </div>
                     <ul className="transaction-list">
@@ -151,9 +155,9 @@ export default class TransactionsView extends React.Component {
     }
 
     renderContent() {
-        const {isLoading, loadingMessage, loadingError} = this.state;
+        const { isLoading, loadingMessage, loadingError } = this.state;
         if (isLoading) {
-            return <Spinner text={loadingMessage}/>
+            return <Spinner text={loadingMessage} />
         } else if (loadingError) {
             return <div>error</div>
         } else {
@@ -167,7 +171,7 @@ export default class TransactionsView extends React.Component {
                 <div className="box-content">
                     <div className="box-header">
                         <button className="back-btn" onClick={this.redirect.bind(this, '/accounts')}><i
-                            className="icofont icofont-reply"/>back</button>
+                            className="icofont icofont-reply" />back</button>
                         <h3>
                             {formatter.formatIBAN(this.accountId.substring(0, this.accountId.length - 3))}
                         </h3>
