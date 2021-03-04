@@ -1,15 +1,8 @@
 const path = require('path');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const devMode = process.env.NODE_ENV !== 'production'
-const extractStyle = new MiniCssExtractPlugin({
-    filename: "style.css",
-    disable: false
-});
-console.log('devMode=' + devMode)
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: ['@babel/polyfill', './src/index.jsx'],
+    entry: path.resolve(__dirname, 'src', 'index.jsx'),
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'build'),
@@ -19,32 +12,22 @@ module.exports = {
     },
     devtool: "source-map",
     resolve: {
-        extensions: ['.js', '.json', '.jsx']
+        extensions: ['.js', '.json', '.jsx'],
+        modules: [
+            path.resolve(__dirname, 'src'),
+            'node_modules'
+        ]
     },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
+                use: ['babel-loader']
             },
             {
-                test: /\.html$/,
-                use: [
-                    {
-                        loader: "html-loader"
-                    }
-                ]
-            },
-            {
-                test: /\.(sa|sc|c)ss$/,
-                use: [
-                    devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'sass-loader',
-                ]
+                test: /\.(scss|css)$/,
+                use: ['style-loader', 'css-loader', 'sass-loader'],
             },
             {
                 test: /\.(jpg|png|svg|gif)$/,
@@ -54,18 +37,16 @@ module.exports = {
                 }]
             },
             {
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[ext]'
+                test: /\.(woff|woff2|eot|ttf)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192,
+                            name: 'assets/fonts/[hash].[ext]'
+                        }
                     }
-                }]
-            },
-            {
-                test: /\.ya?ml$/,
-                loader: ['json-loader', 'yaml-loader'],
-                exclude: /node_modules/
+                ]
             },
             {
                 test: /\.json$/,
@@ -74,10 +55,8 @@ module.exports = {
         ]
     },
     plugins: [
-        extractStyle,
-        new HtmlWebPackPlugin({
-            template: "./src/index.html",
-            filename: "./index.html"
+        new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, "src", "index.html")
         })
     ],
     devServer: {

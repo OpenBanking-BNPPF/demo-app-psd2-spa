@@ -12,9 +12,6 @@ import PaymentFailureView from "./payment-failure-view/payment-failure-view";
 import '../static/cool-background.png';
 
 class App extends React.Component {
-    constructor() {
-        super();
-    }
 
     initRoutes() {
         return (
