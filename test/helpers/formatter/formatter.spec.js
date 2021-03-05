@@ -1,5 +1,5 @@
-const assert = require('assert');
-const formatter = require('../../../src/helpers/formatter/formatter')
+import assert from 'assert';
+import formatter from '../../../src/helpers/formatter/formatter'
 
 
 describe("Formatter testing", () => {
