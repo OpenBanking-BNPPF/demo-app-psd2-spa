@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { getJson } from '../../helpers/reactive-api-client/reactive-api-client';
 import { map } from 'rxjs/operators';
 import { apiService } from "../apis/apis";
