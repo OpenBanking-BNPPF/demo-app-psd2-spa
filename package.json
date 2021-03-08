@@ -12,7 +12,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --colors",
     "lint": "eslint src/",
-    "publish-coverage": "npm run test-with-coverage && nyc report --reporter=text-lcov | coveralls"
+    "publish-coverage": "npm run test:coverage && cat ./coverage/lcov.info | coveralls"
   },
   "author": "",
   "license": "ISC",
