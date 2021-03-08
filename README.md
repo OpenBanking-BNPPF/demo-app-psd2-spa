@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/OpenBanking-BNPPF/demo-app-psd2-spa.svg?branch=master)](https://travis-ci.com/github/OpenBanking-BNPPF/demo-app-psd2-spa)
+[![Coverage Status](https://coveralls.io/repos/github/OpenBanking-BNPPF/demo-app-psd2-spa/badge.svg?branch=master)](https://coveralls.io/github/OpenBanking-BNPPF/demo-app-psd2-spa)
+[![Known Vulnerabilities](https://snyk.io/test/github/OpenBanking-BNPPF/demo-app-psd2-spa/badge.svg)](https://snyk.io/test/github/OpenBanking-BNPPF/demo-app-psd2-spa)
+
 # OPEN BANK - DEMO APP
 ===========
 
