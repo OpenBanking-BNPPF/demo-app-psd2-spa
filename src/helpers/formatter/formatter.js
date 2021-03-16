@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import moment from 'moment'
 
 class Formatter {
 	formatIBAN (iban) {
@@ -15,6 +16,10 @@ class Formatter {
 
 	getMonth (date) {
 		return DateTime.fromISO(date).monthShort
+	}
+
+	formatDate(date) {
+		return moment(date).format('YYYY-MM-DD')
 	}
 }
 

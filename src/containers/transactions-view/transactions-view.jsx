@@ -113,7 +113,7 @@ export default class TransactionsView extends React.Component {
             const filteredItems = this.transactions.filter(
                 item => {
                     return item.transactionAmount.amount.indexOf(term) > -1
-                        || item.remittanceInformation[0].toLowerCase().indexOf(term.toLowerCase()) > -1
+                        || item.remittanceInformation.unstructured[0].toLowerCase().indexOf(term.toLowerCase()) > -1
                         || item.entryReference.toLowerCase().indexOf(term.toLowerCase()) > -1
                 });
             this.setState({ filteredItems: filteredItems });
