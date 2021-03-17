@@ -120,4 +120,28 @@ describe('AccountsView mounted', () => {
 			expect(wrapper.find('.account-balance-currency').last().text()).toBe('EUR')
 		})
 	})
+
+	describe('Unmount', () => {
+		beforeEach(() => {
+			jest.spyOn(aispService, 'getAccounts').mockImplementation(() => of(['BE19001123456789', 'BE19001123456780']))
+			jest.spyOn(aispService, 'getAccountDetails').mockImplementation(iban => of({
+				accountId: { iban: iban },
+				balances: [
+					{ balanceAmount: { amount: 10.455, currency: 'EUR' } },
+					{ balanceAmount: { amount: 20, currency: 'EUR' } },
+					{ balanceAmount: { amount: 30, currency: 'EUR' } }
+				],
+				transactions: [],
+			}))
+		})
+
+		afterEach(() => jest.restoreAllMocks())
+
+		it('should unsubscribe', () => {
+			const match = {}
+			const history = createMemoryHistory();
+			const wrapper = mount(<AccountsView match={match} history={history} />)
+			wrapper.unmount()
+		})
+	})
 })
