@@ -5,12 +5,12 @@ import Spinner from '../../components/spinner/spinner'
 import { authService } from '../../services/auth/auth-service'
 
 
-// describe('LoginView shallow', () => {
-// 	it('should be loading', () => {
-// 		const wrapper = shallow(<LoginView />)
-// 		expect(wrapper.contains(<Spinner text='loading data' />)).toEqual(true)
-// 	})
-// })
+describe('LoginView shallow', () => {
+	it('should be loading', () => {
+		const wrapper = shallow(<LoginView />)
+		expect(wrapper.contains(<Spinner text='loading data' />)).toEqual(true)
+	})
+})
 
 describe('LoginView mounted', () => {
 
@@ -34,7 +34,7 @@ describe('LoginView mounted', () => {
 	describe('Mount success', () => {
 		const { location } = window;
 		const mockUnsubscribe = jest.fn(() => { })
-		const mockSubscribe = jest.fn((successFn, errFn) => {
+		const mockSubscribe = jest.fn((successFn) => {
 			successFn('http://dummyLoginUrl')
 			return {
 				unsubscribe: mockUnsubscribe
