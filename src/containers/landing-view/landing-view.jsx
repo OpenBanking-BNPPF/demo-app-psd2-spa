@@ -19,7 +19,6 @@ export default class LandingView extends React.Component {
     }
 
     componentWillMount() {
-        const brand = authService.getBrand()
         const authorizationCode = queryString.parse(this.props.location.search).code;
         authService.getToken(authorizationCode).subscribe(
             () => {
