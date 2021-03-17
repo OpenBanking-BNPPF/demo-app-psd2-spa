@@ -9,18 +9,18 @@ import '../../static/hellobank_logo.png';
 
 export default class LoginView extends React.Component {
 
-  constructor () {
+  constructor() {
     super()
     this.state = {
       isLoading: true
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     if (this.loginSub) this.loginSub.unsubscribe()
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.loginSub = authService.login().subscribe(
       resp => {
         this.loginURL = resp
@@ -30,12 +30,12 @@ export default class LoginView extends React.Component {
     )
   }
 
-  login (brand) {
+  login(brand) {
     authService.selectBrand(brand)
     window.location = `${this.loginURL}&brand=${brand}`
   }
 
-  render () {
+  render() {
     const { isLoading } = this.state
     if (isLoading) {
       return <Spinner text='loading data' />
@@ -43,9 +43,9 @@ export default class LoginView extends React.Component {
       return (
         <div>
           <div id='login-view-container'>
-            <button onClick={this.login.bind(this, 'bnppf')} style={{backgroundImage: "url('./assets/bnppf_logo.png')"}}></button>
-            <button onClick={this.login.bind(this, 'hb')}  style={{backgroundImage: "url('./assets/hellobank_logo.png')"}}></button>
-            <button onClick={this.login.bind(this, 'fintro')}  style={{backgroundImage: "url('./assets/fintro_logo.png')"}}></button>
+            <button onClick={this.login.bind(this, 'bnppf')} style={{ backgroundImage: "url('./assets/bnppf_logo.png')" }}></button>
+            <button onClick={this.login.bind(this, 'hb')} style={{ backgroundImage: "url('./assets/hellobank_logo.png')" }}></button>
+            <button onClick={this.login.bind(this, 'fintro')} style={{ backgroundImage: "url('./assets/fintro_logo.png')" }}></button>
           </div>
           <p className='text'>This will redirect you to the authorization server of your organization</p>
         </div>
