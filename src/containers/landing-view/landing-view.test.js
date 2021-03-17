@@ -1,35 +1,26 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { createMemoryHistory } from "history";
+import { of } from 'rxjs'
+import { createMemoryHistory } from "history"
 import LandingView from './landing-view'
 import { authService } from '../../services/auth/auth-service'
 
 describe('LandingView mounted', () => {
 
-	const mockSubscribe = jest.fn((successFn) => {
-		successFn()
-	})
-
 	beforeEach(() => {
-		jest.spyOn(authService, 'getToken').mockImplementation(() => ({
-			subscribe: mockSubscribe
-		}))
+		jest.spyOn(authService, 'getToken').mockImplementation(() => of('my-access-token'))
 	})
 
-	afterEach(() => {
-		authService.getToken.mockClear()
-	})
+	afterEach(() => jest.restoreAllMocks())
 
-	it('should be loaded after succesfull fetch login url', () => {
+	it('should be redirected to accounts after successfull landing', () => {
 		const match = {}
 		const location = {
 			search: '?bla=some1&code=myCode'
 		}
 		const history = createMemoryHistory();
 		mount(<LandingView match={match} location={location} history={history} />)
-		expect(mockSubscribe).toHaveBeenCalledTimes(1)
 		expect(history.location.pathname).toBe('/accounts')
 	})
-
 
 })

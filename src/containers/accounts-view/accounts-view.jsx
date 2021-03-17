@@ -13,7 +13,7 @@ export default class AccountsView extends React.Component {
         this.state = {
             isLoading: true,
             loadingMessage: '',
-            loadingError: false
+            loadingError: ''
         };
     }
 
@@ -34,8 +34,8 @@ export default class AccountsView extends React.Component {
         this.setState({
             isLoading: true,
             loadingMessage: 'loading accounts information',
-            loadingError: false
-        });
+            loadingError: ''
+        })
         this.getAccountsSubscription = aispService.getAccounts().subscribe(
             accounts => {
                 const requests = [];
@@ -50,8 +50,7 @@ export default class AccountsView extends React.Component {
                             this.accounts = accountsDetails;
                             this.setState({
                                 isLoading: false,
-                                loadingMessage: '',
-                                loadingError: false
+                                loadingMessage: ''
                             })
                         },
                         err => {
@@ -62,11 +61,17 @@ export default class AccountsView extends React.Component {
                                 this.setState({
                                     isLoading: false,
                                     loadingMessage: '',
-                                    loadingError: true
+                                    loadingError: 'Error fetching account details'
                                 })
                             }
                         }
                     )
+                } else {
+                    this.setState({
+                        isLoading: false,
+                        loadingMessage: '',
+                        loadingError: 'Found no accounts!'
+                    })
                 }
             },
             err => {
@@ -77,7 +82,7 @@ export default class AccountsView extends React.Component {
                     this.setState({
                         isLoading: false,
                         loadingMessage: '',
-                        loadingError: true
+                        loadingError: 'Failed to load accounts'
                     })
                 }
             }
@@ -157,7 +162,7 @@ export default class AccountsView extends React.Component {
         if (isLoading) {
             return <Spinner text={loadingMessage}/>
         } else if (loadingError) {
-            return <div>error</div>
+            return <div id="loadingError">{loadingError}</div>
         } else {
             return this.renderView()
         }
