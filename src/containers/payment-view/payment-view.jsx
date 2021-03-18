@@ -185,14 +185,14 @@ export default class PaymentView extends React.Component {
                             value={frequency} />
                         )}
                         {paymentType && ['SEPA-FUTURE', 'SEPA-STO'].includes(paymentType.value) && (
-                            <div className="marvin-date-input">
-                                <label htmlFor="requestedExecutionDate">Req. execution date *</label>
+                            <div className="marvin-text-input">
                                 <DatePicker
                                     id="requestedExecutionDate"
                                     dateFormat="yyyy-MM-dd"
                                     selected={requestedExecutionDate}
                                     onChange={date => this.setState({ requestedExecutionDate: date })}
                                 />
+                                <label class="shrink date-label" data-shrink="true">Req. execution date *</label>
                             </div>
                         )}
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (

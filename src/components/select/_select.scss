@@ -22,10 +22,11 @@
     &.visible {
       opacity: 1;
       visibility: visible;
+      background-color: rgb(243, 240, 255);
     }
     position: absolute;
-    top:-32px;
-    left: 0;
+    top: 0px;
+    left: 50px;
   }
 
   .marvin-select-list {
@@ -126,7 +127,7 @@
     text-overflow: ellipsis;
     transform: translate(0, 15px) scale(1.2);
     transform-origin: left bottom;
-    font-size: 16px;
+    font-size: 14px;
     white-space: nowrap;
     text-transform: lowercase;
 
