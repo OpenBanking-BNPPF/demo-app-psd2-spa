@@ -14,20 +14,45 @@ export default class PaymentView extends React.Component {
 
     constructor() {
         super();
+        this.frequencyOptions = Object.entries({
+            'WEEK': 'Weekly',
+            'TOWK': 'Every 2 weeks',
+            'MNTH': 'Monthly',
+            'TOMN': 'Every 2 months',
+            'QUTR': 'Quarterly',
+            'SEMI': 'Every 6 months',
+            'YEAR': 'Yearly',
+        }).map(([type, typeLabel]) => {
+            return {
+                label: typeLabel,
+                value: type
+            }
+        })
+        this.paymentTypesOptions = Object.entries({
+            'SEPA': 'SEPA',
+            'SEPA-INST': 'Instant',
+            'SEPA-FUTURE': 'Future',
+            'SEPA-STO': 'Standing Order',
+        }).map(([type, typeLabel]) => {
+            return {
+                label: typeLabel,
+                value: type
+            }
+        })
 
         this.state = {
             isLoading: true,
             loadingMessage: '',
-            loadingError: false,
+            loadingError: '',
             access_token: null,
             beneficiaryName: '',
             beneficiaryAccount: '',
             amount: '',
             remittanceInformation: '',
             debtorIBAN: null,
-            paymentType: null,
+            paymentType: this.paymentTypesOptions[0],
             requestedExecutionDate: new Date(),
-            frequency: null,
+            frequency: this.frequencyOptions[0],
             numberOfOccurrences: '',
             dayOfExecution: '01',
         };
@@ -45,53 +70,25 @@ export default class PaymentView extends React.Component {
     }
 
     init() {
-        this.paymentTypesOptions = Object.entries({
-            'SEPA': 'SEPA',
-            'SEPA-INST': 'Instant',
-            'SEPA-FUTURE': 'Future',
-            'SEPA-STO': 'Standing Order',
-        }).map(([type, typeLabel]) => {
-            return {
-                label: typeLabel,
-                value: type
-            }
-        })
-        this.setState({ paymentType: this.paymentTypesOptions[0] })
-        this.frequencyOptions = Object.entries({
-            'WEEK': 'Weekly',
-            'TOWK': 'Every 2 weeks',
-            'MNTH': 'Monthly',
-            'TOMN': 'Every 2 months',
-            'QUTR': 'Quarterly',
-            'SEMI': 'Every 6 months',
-            'YEAR': 'Yearly',
-        }).map(([type, typeLabel]) => {
-            return {
-                label: typeLabel,
-                value: type
-            }
-        })
-        this.setState({ frequency: this.frequencyOptions[0] })
         this.accounts = this.props.location.state.accounts;
-        this.authenticateClientSub = this.authenticateClient().subscribe()
+        this.authenticateClient()
     }
 
     authenticateClient() {
         this.setState({
             isLoading: true,
             loadingMessage: 'getting client token',
-            loadingError: false
+            loadingError: ''
         });
-        return pispService.authenticateClient().pipe(
-            map(res => {
+        this.authenticateClientSub = pispService.authenticateClient().subscribe(
+            res => {
                 this.setState({
                     isLoading: false,
                     loadingMessage: '',
-                    loadingError: false,
                     access_token: res.access_token
                 })
-            }),
-            catchError(err => {
+            },
+            err => {
                 if (err.response && err.response.status === 401) {
                     this.redirect('/login')
                 } else {
@@ -99,23 +96,23 @@ export default class PaymentView extends React.Component {
                     this.setState({
                         isLoading: false,
                         loadingMessage: '',
-                        loadingError: true
+                        loadingError: 'Failed to Authenticate!'
                     })
                 }
             }
-            ))
+        )
     }
 
     makePayment() {
         const {
             access_token, beneficiaryName, beneficiaryAccount,
-            amount, remittanceInformation, debtorIBAN, paymentType, 
+            amount, remittanceInformation, debtorIBAN, paymentType,
             requestedExecutionDate, frequency, numberOfOccurrences,
             dayOfExecution,
         } = this.state;
         this.makePaymentSub = pispService.makePayment({
             access_token, beneficiaryName, beneficiaryAccount,
-            amount, remittanceInformation, debtorAccount: debtorIBAN.value, paymentType: paymentType.value, 
+            amount, remittanceInformation, debtorAccount: debtorIBAN.value, paymentType: paymentType.value,
             requestedExecutionDate: formatter.formatDate(requestedExecutionDate),
             frequency: frequency.value, numberOfOccurrences, dayOfExecution
         }).subscribe(
@@ -132,7 +129,7 @@ export default class PaymentView extends React.Component {
     onFrequencyChange(frequency) {
         const freqValue = frequency.value
         let dayOfExecution = '01'
-        if(!['WEEK', 'TOWK'].includes(freqValue)) {
+        if (!['WEEK', 'TOWK'].includes(freqValue)) {
             dayOfExecution = '31'
         }
         this.setState({
@@ -175,14 +172,14 @@ export default class PaymentView extends React.Component {
                                     value: acc.accountId.iban
                                 }
                             })}
-                            value={debtorIBAN} 
+                            value={debtorIBAN}
                         />
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
                             <Select id="frequency"
-                            label="FREQUENCY *"
-                            onChange={this.onFrequencyChange}
-                            options={this.frequencyOptions}
-                            value={frequency} />
+                                label="FREQUENCY *"
+                                onChange={this.onFrequencyChange}
+                                options={this.frequencyOptions}
+                                value={frequency} />
                         )}
                         {paymentType && ['SEPA-FUTURE', 'SEPA-STO'].includes(paymentType.value) && (
                             <div className="marvin-date-input">
@@ -197,11 +194,11 @@ export default class PaymentView extends React.Component {
                         )}
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
                             <TextInput id="numberOfOccurrences"
-                            value={numberOfOccurrences}
-                            type="number"
-                            required
-                            onChange={(val) => this.setState({ numberOfOccurrences: val })}
-                            label="#occurences" />
+                                value={numberOfOccurrences}
+                                type="number"
+                                required
+                                onChange={(val) => this.setState({ numberOfOccurrences: val })}
+                                label="#occurences" />
                         )}
                         <TextInput id="beneficiary-name"
                             value={beneficiaryName}
@@ -239,7 +236,7 @@ export default class PaymentView extends React.Component {
         if (isLoading) {
             return <Spinner text={loadingMessage} />
         } else if (loadingError) {
-            return <div>error</div>
+            return <div id="loadingError">{loadingError}</div>
         } else {
             return this.renderView()
         }
