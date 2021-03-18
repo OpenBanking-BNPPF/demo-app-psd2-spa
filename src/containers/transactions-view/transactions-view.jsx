@@ -14,7 +14,7 @@ export default class TransactionsView extends React.Component {
         this.state = {
             isLoading: true,
             loadingMessage: '',
-            loadingError: false,
+            loadingError: '',
             searchTerm: '',
             filteredItems: [],
         }
@@ -37,7 +37,7 @@ export default class TransactionsView extends React.Component {
         this.setState({
             isLoading: true,
             loadingMessage: 'loading transactions',
-            loadingError: false
+            loadingError: ''
         });
         this.getTransactionsSub = aispService.getTransactions(this.accountId).subscribe(
             transactions => {
@@ -48,7 +48,6 @@ export default class TransactionsView extends React.Component {
                 this.setState({
                     isLoading: false,
                     loadingMessage: '',
-                    loadingError: false
                 })
             },
             err => {
@@ -59,7 +58,7 @@ export default class TransactionsView extends React.Component {
                     this.setState({
                         isLoading: false,
                         loadingMessage: '',
-                        loadingError: true
+                        loadingError: 'Failed to load transactions!'
                     })
                 }
             }
@@ -159,7 +158,7 @@ export default class TransactionsView extends React.Component {
         if (isLoading) {
             return <Spinner text={loadingMessage} />
         } else if (loadingError) {
-            return <div>error</div>
+            return <div id="loadingError">{loadingError}</div>
         } else {
             return this.renderTransactions()
         }

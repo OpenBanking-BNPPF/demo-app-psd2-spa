@@ -9,7 +9,7 @@ export class SearchBox extends React.Component {
             <div className="search-box-container">
             <span className="search-box" style={style}>
                 <i className="search-icon icofont icofont-search"/>
-                <input type="text"
+                <input type="text" id="searchField"
                        placeholder={placeholder}
                        onChange={handleChange}
                        value={value}/>
