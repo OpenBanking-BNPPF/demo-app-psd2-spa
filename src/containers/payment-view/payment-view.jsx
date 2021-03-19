@@ -28,11 +28,21 @@ export default class PaymentView extends React.Component {
                 value: type
             }
         })
+        this.currencies = Object.entries({
+            'USD': 'US Dollar',
+            'EUR': 'Euro',
+        }).map(([iso, label]) => {
+            return {
+                label: label,
+                value: iso
+            }
+        })
         this.paymentTypesOptions = Object.entries({
             'SEPA': 'SEPA',
             'SEPA-INST': 'Instant',
             'SEPA-FUTURE': 'Future',
             'SEPA-STO': 'Standing Order',
+            'INTP': 'International payment',
         }).map(([type, typeLabel]) => {
             return {
                 label: typeLabel,
@@ -48,6 +58,7 @@ export default class PaymentView extends React.Component {
             beneficiaryName: '',
             beneficiaryAccount: '',
             amount: '',
+            currency: this.currencies[0],
             remittanceInformation: '',
             debtorIBAN: null,
             paymentType: this.paymentTypesOptions[0],
@@ -82,6 +93,9 @@ export default class PaymentView extends React.Component {
                 value: acc.accountId.iban
             }
         })
+        if (this.accountOptions.length === 1) {
+            this.setState({debtorIBAN: this.accountOptions[0]})
+        }
     }
 
     authenticateClient() {
@@ -118,11 +132,11 @@ export default class PaymentView extends React.Component {
             access_token, beneficiaryName, beneficiaryAccount,
             amount, remittanceInformation, debtorIBAN, paymentType,
             requestedExecutionDate, frequency, numberOfOccurrences,
-            dayOfExecution,
+            dayOfExecution, currency,
         } = this.state;
         this.makePaymentSub = pispService.makePayment({
             access_token, beneficiaryName, beneficiaryAccount,
-            amount, remittanceInformation, debtorAccount: debtorIBAN.value, paymentType: paymentType.value,
+            amount, remittanceInformation, debtorAccount: debtorIBAN.value, paymentType: paymentType.value, currency: currency.value,
             requestedExecutionDate: formatter.formatDate(requestedExecutionDate),
             frequency: frequency.value, numberOfOccurrences, dayOfExecution
         }).subscribe(
@@ -153,7 +167,7 @@ export default class PaymentView extends React.Component {
     }
 
     renderView() {
-        const { paymentType, frequency, numberOfOccurrences, debtorIBAN, beneficiaryName, beneficiaryAccount, amount, remittanceInformation, requestedExecutionDate } = this.state;
+        const { paymentType, currency, frequency, numberOfOccurrences, debtorIBAN, beneficiaryName, beneficiaryAccount, amount, remittanceInformation, requestedExecutionDate } = this.state;
         return (
             <div id="payment-container">
                 <div className="box-content">
@@ -198,7 +212,7 @@ export default class PaymentView extends React.Component {
                                     selected={requestedExecutionDate}
                                     onChange={date => this.setState({ requestedExecutionDate: date })}
                                 />
-                                <label className="shrink date-label" data-shrink="true">Req. execution date *</label>
+                                <label htmlFor="requestedExecutionDate" className={`date-label ${requestedExecutionDate ? '' : 'empty'}`}>Request execution date *</label>
                             </div>
                         )}
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
@@ -224,7 +238,18 @@ export default class PaymentView extends React.Component {
                             required
                             type="number"
                             onChange={(val) => this.setState({ amount: val })}
-                            label="amount" />
+                            label={`amount${paymentType && ['INTP'].includes(paymentType.value) ? '' : ' in euro'}`} />
+                        {paymentType && ['INTP'].includes(paymentType.value) && (
+                            <Select id="currency"
+                                label="CURRENCY *"
+                                onChange={val => {
+                                    this.setState({
+                                        currency: val
+                                    })
+                                }}
+                                options={this.currencies}
+                                value={currency} />
+                        )}
                         <TextInput id="remittanceInformation"
                             required
                             value={remittanceInformation}
@@ -232,12 +257,24 @@ export default class PaymentView extends React.Component {
                             label="communication" />
                     </form>
                     <button className="make-payment-btn"
-                        disabled={!debtorIBAN || debtorIBAN.value === '' || beneficiaryName === '' || beneficiaryAccount === '' || amount === '' || remittanceInformation === ''}
+                        disabled={this.isNextButtonDisabled()}
                         onClick={this.makePayment}>NEXT
                     </button>
                 </div>
             </div>
         )
+    }
+
+    isNextButtonDisabled() {
+        const { paymentType, frequency, numberOfOccurrences, debtorIBAN, beneficiaryName, beneficiaryAccount, amount, remittanceInformation, requestedExecutionDate } = this.state;
+        let isDisbaled = !debtorIBAN || debtorIBAN.value === '' || beneficiaryName === '' || beneficiaryAccount === '' || amount === '' || remittanceInformation === ''
+        if (['SEPA-FUTURE', 'SEPA-STO'].includes(paymentType.value)) {
+            isDisbaled = (isDisbaled || !requestedExecutionDate || requestedExecutionDate === '')
+        }
+        if (['SEPA-STO'].includes(paymentType.value)) {
+            isDisbaled = (isDisbaled || frequency === '' || numberOfOccurrences === '')
+        }
+        return isDisbaled
     }
 
     render() {

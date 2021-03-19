@@ -204,8 +204,35 @@ describe('PaymentView mounted', () => {
 			wrapper.setState({ beneficiaryName: 'Benoit' })
 			wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
 			wrapper.setState({ amount: '2.5' })
+			wrapper.setState({ numberOfOccurrences: '5' })
 			wrapper.setState({ remittanceInformation: 'STO for testing' })
 			wrapper.setState({ requestedExecutionDate: moment().add(5, 'd').toDate() })
+
+			// Verify button enabled 
+			expect(wrapper.find('.make-payment-btn').props().disabled).toBe(false)
+
+			// Make payment + verify
+			wrapper.find('.make-payment-btn').simulate('click')
+
+			expect(pispService.makePayment).toHaveBeenCalledTimes(1)
+			expect(window.location).toBe('http://payment-was-success')
+		})
+
+		it('should allow International payments', () => {
+			const match = {}
+			const accounts = createAccounts()
+			const location = { state: { accounts } }
+			const history = createMemoryHistory();
+			const wrapper = mount(<PaymentView location={location} match={match} history={history} />)
+
+			// Fill Payment fields
+			wrapper.setState({ paymentType: wrapper.instance().paymentTypesOptions[4] })
+			wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
+			wrapper.setState({ beneficiaryName: 'Benoit' })
+			wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
+			wrapper.setState({ amount: '2.5' })
+			wrapper.setState({ currency: 'USD' })
+			wrapper.setState({ remittanceInformation: 'INTP for testing' })
 
 			// Verify button enabled 
 			expect(wrapper.find('.make-payment-btn').props().disabled).toBe(false)
