@@ -8,6 +8,10 @@ import Spinner from '../../components/spinner/spinner'
 import { pispService } from '../../services/pisp/pisp'
 
 
+const setInputValue = (wrapper, id, value) => {
+	wrapper.find(id).find('input').simulate('change', { target: { value: value } })
+}
+
 describe('PaymentView shallow', () => {
 	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
 	afterEach(() => jest.restoreAllMocks())
@@ -124,10 +128,10 @@ describe('PaymentView mounted', () => {
 
 			// Fill Payment fields
 			wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
-			wrapper.setState({ beneficiaryName: 'Benoit' })
-			wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
-			wrapper.setState({ amount: '2.1' })
-			wrapper.setState({ remittanceInformation: 'SEPA for testing' })
+			setInputValue(wrapper, '#beneficiary-name', 'Benoit')
+			setInputValue(wrapper, '#beneficiary-account', 'BE19001288306543')
+			setInputValue(wrapper, '#amount', '2.1')
+			setInputValue(wrapper, '#remittanceInformation', 'SEPA for testing')
 
 			// Verify button enabled 
 			expect(wrapper.find('.make-payment-btn').props().disabled).toBe(false)
@@ -149,10 +153,10 @@ describe('PaymentView mounted', () => {
 			// Fill Payment fields
 			wrapper.setState({ paymentType: wrapper.instance().paymentTypesOptions[1] })
 			wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
-			wrapper.setState({ beneficiaryName: 'Benoit' })
-			wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
-			wrapper.setState({ amount: '2.1' })
-			wrapper.setState({ remittanceInformation: 'Instant for testing' })
+			setInputValue(wrapper, '#beneficiary-name', 'Benoit')
+			setInputValue(wrapper, '#beneficiary-account', 'BE19001288306543')
+			setInputValue(wrapper, '#amount', '2.1')
+			setInputValue(wrapper, '#remittanceInformation', 'Instant for testing')
 
 			// Verify button enabled 
 			expect(wrapper.find('.make-payment-btn').props().disabled).toBe(false)
@@ -174,10 +178,10 @@ describe('PaymentView mounted', () => {
 			// Fill Payment fields
 			wrapper.setState({ paymentType: wrapper.instance().paymentTypesOptions[2] })
 			wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
-			wrapper.setState({ beneficiaryName: 'Benoit' })
-			wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
-			wrapper.setState({ amount: '2.1' })
-			wrapper.setState({ remittanceInformation: 'Future for testing' })
+			setInputValue(wrapper, '#beneficiary-name', 'Benoit')
+			setInputValue(wrapper, '#beneficiary-account', 'BE19001288306543')
+			setInputValue(wrapper, '#amount', '2.1')
+			setInputValue(wrapper, '#remittanceInformation', 'Future for testing')
 			wrapper.setState({ requestedExecutionDate: moment().add(1, 'd').toDate() })
 
 			// Verify button enabled 
@@ -201,11 +205,11 @@ describe('PaymentView mounted', () => {
 			wrapper.setState({ paymentType: wrapper.instance().paymentTypesOptions[3] })
 			wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
 			wrapper.setState({ frequency: wrapper.instance().frequencyOptions[0] })
-			wrapper.setState({ beneficiaryName: 'Benoit' })
-			wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
-			wrapper.setState({ amount: '2.5' })
-			wrapper.setState({ numberOfOccurrences: '5' })
-			wrapper.setState({ remittanceInformation: 'STO for testing' })
+			setInputValue(wrapper, '#beneficiary-name', 'Benoit')
+			setInputValue(wrapper, '#beneficiary-account', 'BE19001288306543')
+			setInputValue(wrapper, '#amount', '2.5')
+			setInputValue(wrapper, '#numberOfOccurrences', '5')
+			setInputValue(wrapper, '#remittanceInformation', 'STO for testing')
 			wrapper.setState({ requestedExecutionDate: moment().add(5, 'd').toDate() })
 
 			// Verify button enabled 
