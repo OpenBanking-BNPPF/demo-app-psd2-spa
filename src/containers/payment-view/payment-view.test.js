@@ -28,6 +28,22 @@ describe('PaymentView shallow', () => {
 	})
 })
 
+describe('PaymentView unmount', () => {
+	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
+	afterEach(() => jest.restoreAllMocks())
+
+	it('should be unmounting', () => {
+		const match = {}
+		const location = {
+			state: {
+				accounts: []
+			}
+		}
+		const wrapper = shallow(<PaymentView match={match} location={location} />)
+		wrapper.unmount()
+	})
+})
+
 describe('PaymentView mounted failures', () => {
 	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
 	afterEach(() => jest.restoreAllMocks())
