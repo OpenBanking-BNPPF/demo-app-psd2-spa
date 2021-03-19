@@ -70,8 +70,18 @@ export default class PaymentView extends React.Component {
     }
 
     init() {
-        this.accounts = this.props.location.state.accounts;
+        this.initAccounts()
         this.authenticateClient()
+    }
+
+    initAccounts() {
+        this.accounts = this.props.location.state.accounts;
+        this.accountOptions = this.accounts.map(acc => {
+            return {
+                label: `${formatter.formatIBAN(acc.accountId.iban)}   -   ( ${formatter.formatAmount(+acc.balances[0].balanceAmount.amount)}EUR )`,
+                value: acc.accountId.iban
+            }
+        })
     }
 
     authenticateClient() {
@@ -118,6 +128,10 @@ export default class PaymentView extends React.Component {
         }).subscribe(
             consentURL => {
                 window.location = consentURL
+            },
+            err => {
+                console.error(err)
+                this.props.history.push('/PaymentFailure')
             }
         )
     }
@@ -166,12 +180,7 @@ export default class PaymentView extends React.Component {
                                     debtorIBAN: val
                                 })
                             }}
-                            options={this.accounts.map(acc => {
-                                return {
-                                    label: `${formatter.formatIBAN(acc.accountId.iban)}   -   ( ${formatter.formatAmount(+acc.balances[0].balanceAmount.amount)}EUR )`,
-                                    value: acc.accountId.iban
-                                }
-                            })}
+                            options={this.accountOptions}
                             value={debtorIBAN}
                         />
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
@@ -189,7 +198,7 @@ export default class PaymentView extends React.Component {
                                     selected={requestedExecutionDate}
                                     onChange={date => this.setState({ requestedExecutionDate: date })}
                                 />
-                                <label class="shrink date-label" data-shrink="true">Req. execution date *</label>
+                                <label className="shrink date-label" data-shrink="true">Req. execution date *</label>
                             </div>
                         )}
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
