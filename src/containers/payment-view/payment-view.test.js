@@ -73,23 +73,41 @@ const createAccounts = () => {
 }
 
 describe('PaymentView mounted', () => {
-	beforeEach(() => jest.spyOn(pispService, 'authenticateClient').mockImplementation(() => of({ access_token: 'access-token' })))
+	beforeEach(() => {
+		jest.spyOn(pispService, 'authenticateClient').mockImplementation(() => of({ access_token: 'access-token' }))
+	})
 	afterEach(() => jest.restoreAllMocks())
 
-	describe('Inital screen', () => {
-
-		it('should render initial screen', () => {
-			const match = {}
-			const location = {
-				state: {
-					accounts: createAccounts()
-				}
+	it('should render initial screen', () => {
+		const match = {}
+		const location = {
+			state: {
+				accounts: createAccounts()
 			}
-			const history = createMemoryHistory();
-			const wrapper = mount(<PaymentView location={location} match={match} history={history} />)
-			expect(wrapper.find('h3').text()).toBe('NEW TRANSFER')
-			expect(wrapper.find('#payment-type').find('.marvin-select-selected-item').first().text()).toBe('SEPA')
+		}
+		const history = createMemoryHistory();
+		const wrapper = mount(<PaymentView location={location} match={match} history={history} />)
+		expect(wrapper.find('h3').text()).toBe('NEW TRANSFER')
+		expect(wrapper.find('#payment-type').find('.marvin-select-selected-item').first().text()).toBe('SEPA')
+		expect(wrapper.find('.make-payment-btn').props().disabled).toBe(true)
+	})
 
-		})
+	it('should allow SEPA payments', () => {
+		const match = {}
+		const accounts = createAccounts()
+		const location = { state: { accounts } }
+		const history = createMemoryHistory();
+		const wrapper = mount(<PaymentView location={location} match={match} history={history} />)
+
+		// Fill Payment fields
+		wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
+		wrapper.setState({ beneficiaryName: 'Benoit' })
+		wrapper.setState({ beneficiaryAccount: 'BE19001288306543' })
+		wrapper.setState({ amount: '2.1' })
+		wrapper.setState({ remittanceInformation: 'SEPA for testing' })
+
+		// Verify button enabled 
+		expect(wrapper.find('.make-payment-btn').props().disabled).toBe(false)
+
 	})
 })
