@@ -97,4 +97,9 @@
 .date-label {
   color: #00965E;
   margin-bottom: 0.8em;
+  &.empty {
+    color: #808080;
+    margin-bottom: 0;
+    font-size: 18px;
+  }
 }
