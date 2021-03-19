@@ -100,13 +100,49 @@ describe('PaymentView mounted', () => {
 		expect(wrapper.find('.make-payment-btn').props().disabled).toBe(true)
 	})
 
+	describe('Payment execution - Failure', () => {
+		beforeEach(() => {
+			jest.spyOn(pispService, 'makePayment').mockImplementation(() => {
+				return {
+					subscribe: (succ, err) => {
+						err('Payment failed!!!')
+					}
+				}
+			})
+		})
+
+		it('should redirect to failure view', () => {
+			const match = {}
+			const accounts = createAccounts()
+			const location = { state: { accounts } }
+			const history = createMemoryHistory();
+			const wrapper = mount(<PaymentView location={location} match={match} history={history} />)
+
+			// Fill Payment fields
+			wrapper.setState({ debtorIBAN: wrapper.instance().accountOptions[0] })
+			setInputValue(wrapper, '#beneficiary-name', 'Benoit')
+			setInputValue(wrapper, '#beneficiary-account', 'BE19001288306543')
+			setInputValue(wrapper, '#amount', '2.1')
+			setInputValue(wrapper, '#remittanceInformation', 'SEPA for testing')
+
+			// Verify button enabled 
+			expect(wrapper.find('.make-payment-btn').props().disabled).toBe(false)
+
+			// Make payment + verify
+			wrapper.find('.make-payment-btn').simulate('click')
+
+			expect(pispService.makePayment).toHaveBeenCalledTimes(1)
+			expect(history.location.pathname).toBe('/PaymentFailure')
+		})
+	})
+
+
 	describe('Payment execution - Success', () => {
 		beforeEach(() => {
 			delete window.location
 			window.location = {
 				href: '',
 			}
-			jest.spyOn(pispService, 'authenticateClient').mockImplementation(() => of({ access_token: 'access-token' }))
 			jest.spyOn(pispService, 'makePayment').mockImplementation(() => {
 				return {
 					subscribe: (succ) => {
