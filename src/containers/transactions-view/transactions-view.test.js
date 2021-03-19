@@ -21,6 +21,9 @@ const createTransaction = (day, remittanceInformation, amount, currency) => {
 }
 
 describe('TransactionsView shallow', () => {
+	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
+	afterEach(() => jest.restoreAllMocks())
+	
 
 	it('should be loading', () => {
 		const wrapper = shallow(<TransactionsView match={match} />)
@@ -30,16 +33,16 @@ describe('TransactionsView shallow', () => {
 
 describe('TransactionsView mounted', () => {
 	let history
-
+	
 	beforeEach(() => {
+		jest.spyOn(console, 'error').mockImplementation(jest.fn())
 		history = createMemoryHistory()
 		history.push('/trx')
 	})
+	afterEach(() => jest.restoreAllMocks())
 
 	describe('Mount fail - getTransactions error', () => {
 		beforeEach(() => jest.spyOn(aispService, 'getTransactions').mockImplementation(() => throwError('Failed to getTransactions')))
-
-		afterEach(() => jest.restoreAllMocks())
 
 		it('should show error div', () => {
 			const wrapper = mount(<TransactionsView match={match} history={history} />)
@@ -51,8 +54,6 @@ describe('TransactionsView mounted', () => {
 	describe('Mount fail - getTransactions 401', () => {
 		beforeEach(() => jest.spyOn(aispService, 'getTransactions').mockImplementation(() => throwError({ response: { status: 401 } })))
 
-		afterEach(() => jest.restoreAllMocks())
-
 		it('should redirect to login', () => {
 			mount(<TransactionsView match={match} history={history} />)
 			expect(history.location.pathname).toBe('/login')
@@ -63,8 +64,6 @@ describe('TransactionsView mounted', () => {
 		beforeEach(() => {
 			jest.spyOn(aispService, 'getTransactions').mockImplementation(() => of([]))
 		})
-
-		afterEach(() => jest.restoreAllMocks())
 
 		it('should show empty list of transactions', () => {
 			const wrapper = mount(<TransactionsView match={match} history={history} />)
@@ -84,8 +83,6 @@ describe('TransactionsView mounted', () => {
 				createTransaction(24, 'remit5', '5.449', 'USD'),
 			]))
 		})
-
-		afterEach(() => jest.restoreAllMocks())
 
 		it('should show list of transactions', () => {
 			const wrapper = mount(<TransactionsView match={match} history={history} />)

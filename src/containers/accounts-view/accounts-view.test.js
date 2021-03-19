@@ -6,8 +6,10 @@ import AccountsView from './accounts-view'
 import Spinner from '../../components/spinner/spinner'
 import { aispService } from '../../services/aisp/aisp'
 
-
 describe('AccountsView shallow', () => {
+	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
+	afterEach(() => jest.restoreAllMocks())
+
 	it('should be loading', () => {
 		const wrapper = shallow(<AccountsView />)
 		expect(wrapper.find(Spinner)).toHaveLength(1)
@@ -15,11 +17,13 @@ describe('AccountsView shallow', () => {
 })
 
 describe('AccountsView mounted', () => {
+	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
+	afterEach(() => jest.restoreAllMocks())
 
 	describe('Mount fail - getAccounts error', () => {
-		beforeEach(() => jest.spyOn(aispService, 'getAccounts').mockImplementation(() => throwError('Failed to getAccounts')))
-
-		afterEach(() => jest.restoreAllMocks())
+		beforeEach(() => {
+			jest.spyOn(aispService, 'getAccounts').mockImplementation(() => throwError('Failed to getAccounts'))
+		})
 
 		it('should show error div', () => {
 			const match = {}
@@ -32,8 +36,6 @@ describe('AccountsView mounted', () => {
 	describe('Mount fail - getAccounts 401', () => {
 		beforeEach(() => jest.spyOn(aispService, 'getAccounts').mockImplementation(() => throwError({ response: { status: 401 } })))
 
-		afterEach(() => jest.restoreAllMocks())
-
 		it('should redirect to login', () => {
 			const match = {}
 			const history = createMemoryHistory();
@@ -43,11 +45,7 @@ describe('AccountsView mounted', () => {
 	})
 
 	describe('Mount - No accounts', () => {
-		beforeEach(() => {
-			jest.spyOn(aispService, 'getAccounts').mockImplementation(() => of([]))
-		})
-
-		afterEach(() => jest.restoreAllMocks())
+		beforeEach(() => jest.spyOn(aispService, 'getAccounts').mockImplementation(() => of([])))
 
 		it('should show error - Found no accounts!', () => {
 			const match = {}
@@ -63,8 +61,6 @@ describe('AccountsView mounted', () => {
 			jest.spyOn(aispService, 'getAccountDetails').mockImplementation(() => throwError('Could not load details'))
 		})
 
-		afterEach(() => jest.restoreAllMocks())
-
 		it('should show error div', () => {
 			const match = {}
 			const history = createMemoryHistory();
@@ -78,8 +74,6 @@ describe('AccountsView mounted', () => {
 			jest.spyOn(aispService, 'getAccounts').mockImplementation(() => of(['BE19001123456789', 'BE19001123456780']))
 			jest.spyOn(aispService, 'getAccountDetails').mockImplementation(() => throwError({ response: { status: 401 } }))
 		})
-
-		afterEach(() => jest.restoreAllMocks())
 
 		it('should redirect to login', () => {
 			const match = {}
@@ -102,8 +96,6 @@ describe('AccountsView mounted', () => {
 				transactions: [],
 			}))
 		})
-
-		afterEach(() => jest.restoreAllMocks())
 
 		it('should render accountList', () => {
 			const match = {}
@@ -134,9 +126,7 @@ describe('AccountsView mounted', () => {
 				transactions: [],
 			}))
 		})
-
-		afterEach(() => jest.restoreAllMocks())
-
+		
 		it('should unsubscribe', () => {
 			const match = {}
 			const history = createMemoryHistory();

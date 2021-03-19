@@ -198,7 +198,7 @@ export default class PaymentView extends React.Component {
                                     selected={requestedExecutionDate}
                                     onChange={date => this.setState({ requestedExecutionDate: date })}
                                 />
-                                <label class="shrink date-label" data-shrink="true">Req. execution date *</label>
+                                <label className="shrink date-label" data-shrink="true">Req. execution date *</label>
                             </div>
                         )}
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (

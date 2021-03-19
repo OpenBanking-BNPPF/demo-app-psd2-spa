@@ -6,8 +6,8 @@ import LandingView from './landing-view'
 import { authService } from '../../services/auth/auth-service'
 
 describe('LandingView mounted', () => {
-
 	beforeEach(() => {
+		jest.spyOn(console, 'error').mockImplementation(jest.fn())
 		jest.spyOn(authService, 'getToken').mockImplementation(() => of('my-access-token'))
 	})
 

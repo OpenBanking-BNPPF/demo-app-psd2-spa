@@ -7,6 +7,9 @@ import { authService } from '../../services/auth/auth-service'
 
 
 describe('LoginView shallow', () => {
+	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
+	afterEach(() => jest.restoreAllMocks())
+
 	it('should be loading', () => {
 		const wrapper = shallow(<LoginView />)
 		expect(wrapper.contains(<Spinner text='loading data' />)).toEqual(true)
@@ -14,11 +17,11 @@ describe('LoginView shallow', () => {
 })
 
 describe('LoginView mounted', () => {
+	beforeEach(() => jest.spyOn(console, 'error').mockImplementation(jest.fn()))
+	afterEach(() => jest.restoreAllMocks())
 
 	describe('Mount fails', () => {
 		beforeEach(() => jest.spyOn(authService, 'login').mockImplementation(() => throwError('Failed login')))
-
-		afterEach(() => jest.restoreAllMocks())
 
 		it('should be loading after error during fetch login url', () => {
 			const wrapper = mount(<LoginView />)
@@ -42,8 +45,7 @@ describe('LoginView mounted', () => {
 		})
 
 		afterEach(() => {
-			window.location = location;
-			jest.restoreAllMocks()
+			window.location = location
 		})
 
 		it('should be loaded after succesfull fetch login url', () => {
