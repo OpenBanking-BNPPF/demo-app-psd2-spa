@@ -4,6 +4,10 @@
   "description": "",
   "author": "The API Sandbox team",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenBanking-BNPPF/demo-app-psd2-spa.git"
+  },
   "main": "index.js",
   "scripts": {
     "audit-at-commit": "npm audit",
