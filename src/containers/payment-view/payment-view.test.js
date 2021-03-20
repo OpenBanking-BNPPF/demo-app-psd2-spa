@@ -102,7 +102,7 @@ describe('PaymentView mounted', () => {
 	})
 	afterEach(() => jest.restoreAllMocks())
 
-	it('should render initial screen', () => {
+	it('should render initial screen and back', () => {
 		const match = {}
 		const location = {
 			state: {
@@ -114,6 +114,8 @@ describe('PaymentView mounted', () => {
 		expect(wrapper.find('h3').text()).toBe('NEW TRANSFER')
 		expect(wrapper.find('#payment-type').find('.marvin-select-selected-item').first().text()).toBe('SEPA')
 		expect(wrapper.find('.make-payment-btn').props().disabled).toBe(true)
+		wrapper.find('.back-btn').at(0).simulate('click')
+		expect(history.location.pathname).toBe('/accounts')
 	})
 
 	describe('Payment execution - Failure', () => {
