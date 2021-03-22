@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { map, catchError } from 'rxjs/operators';
 
 import { pispService } from "../../services/pisp/pisp";
 import Spinner from "../../components/spinner/spinner";
 import TextInput from "../../components/text-input/text-input";
 import Select from "../../components/select/select";
+import DateChooser from "../../components/date-picker/date-picker";
 import { formatter } from "../../helpers/formatter/formatter";
 
 export default class PaymentView extends React.Component {
@@ -29,8 +28,8 @@ export default class PaymentView extends React.Component {
             }
         })
         this.currencies = Object.entries({
-            'USD': 'US Dollar',
             'EUR': 'Euro',
+            'USD': 'US Dollar',
         }).map(([iso, label]) => {
             return {
                 label: label,
@@ -179,16 +178,16 @@ export default class PaymentView extends React.Component {
                     </div>
                     <form className="payment-form">
                         <Select id="payment-type"
-                            label="TYPE *"
+                            label="Type"
+                            required
                             onChange={val => {
-                                this.setState({
-                                    paymentType: val
-                                })
+                                this.setState({paymentType: val, currency: this.currencies[0]})
                             }}
                             options={this.paymentTypesOptions}
                             value={paymentType} />
                         <Select id="from-account"
-                            label="FROM"
+                            label="From"
+                            required
                             onChange={val => {
                                 this.setState({
                                     debtorIBAN: val
@@ -199,21 +198,19 @@ export default class PaymentView extends React.Component {
                         />
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
                             <Select id="frequency"
-                                label="FREQUENCY *"
+                                label="Frequency"
+                                required
                                 onChange={this.onFrequencyChange}
                                 options={this.frequencyOptions}
                                 value={frequency} />
                         )}
                         {paymentType && ['SEPA-FUTURE', 'SEPA-STO'].includes(paymentType.value) && (
-                            <div className="marvin-text-input">
-                                <DatePicker
-                                    id="requestedExecutionDate"
-                                    dateFormat="yyyy-MM-dd"
-                                    selected={requestedExecutionDate}
-                                    onChange={date => this.setState({ requestedExecutionDate: date })}
-                                />
-                                <label htmlFor="requestedExecutionDate" className={`date-label ${requestedExecutionDate ? '' : 'empty'}`}>Request execution date *</label>
-                            </div>
+                            <DateChooser id="requestedExecutionDate"
+                                value={requestedExecutionDate}
+                                required
+                                onChange={(date) => {this.setState({ requestedExecutionDate: date })}}
+                                dateFormat="yyyy-MM-dd"
+                                label="Request execution date" />
                         )}
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
                             <TextInput id="numberOfOccurrences"
@@ -241,7 +238,8 @@ export default class PaymentView extends React.Component {
                             label={`amount${paymentType && ['INTP'].includes(paymentType.value) ? '' : ' in euro'}`} />
                         {paymentType && ['INTP'].includes(paymentType.value) && (
                             <Select id="currency"
-                                label="CURRENCY *"
+                                label="Currency"
+                                required
                                 onChange={val => {
                                     this.setState({
                                         currency: val
