@@ -1,6 +1,12 @@
 {
-  "extends": [
-      "config:base",
-      ":pinAllExceptPeerDependencies"
-  ]
+    "extends": [
+        "config:base",
+        ":pinAllExceptPeerDependencies"
+    ],
+    "packageRules": [
+        {
+          "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+          "automerge": true
+        }
+      ]
 } 
