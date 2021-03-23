@@ -5,12 +5,12 @@ import DatePicker from "react-datepicker";
 export default class DateChooser extends React.Component {
 
     constructor() {
-        super();
+        super()
         this.state = {selectedDate: null};
     }
 
     componentDidMount() {
-        const {value} = this.props;
+        const {value} = this.props
         this.setState({selectedDate: value})
     }
 
@@ -18,9 +18,17 @@ export default class DateChooser extends React.Component {
         this.setState({selectedDate: newProps.value})
     }
 
+    handleFocus() {
+        const pickerLabel = document.querySelector('.date-label')
+        console.log('focus', pickerLabel)
+        if (pickerLabel) {
+            pickerLabel.classList.remove('empty')
+        }
+    }
+
     render() {
-        const {selectedDate} = this.state;
-        const {id, label, dateFormat, required, labelStyle, onChange} = this.props;
+        const {selectedDate} = this.state
+        const {id, label, dateFormat, required, labelStyle, onChange} = this.props
         return (
             <div className="date-chooser">
                 <DatePicker
@@ -29,8 +37,9 @@ export default class DateChooser extends React.Component {
                     selected={selectedDate}
                     autoComplete="off"
                     onChange={date => onChange(date)}
+                    onFocus={this.handleFocus}
                 />
-                <label htmlFor={id} className={`date-label ${selectedDate ? '' : 'empty'}`} style={labelStyle}>{label} {required ? '*' : ''}</label>
+                <label id={`label-${id}`} htmlFor={id} className={`date-label ${selectedDate ? '' : 'empty'}`} style={labelStyle}>{label} {required ? '*' : ''}</label>
             </div>
         )
     }
@@ -39,7 +48,7 @@ export default class DateChooser extends React.Component {
 DateChooser.propTypes = {
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    value: PropTypes.object.isRequired,
+    value: PropTypes.object,
     dateFormat: PropTypes.string.isRequired,
     required: PropTypes.bool,
     onChange: PropTypes.func.isRequired

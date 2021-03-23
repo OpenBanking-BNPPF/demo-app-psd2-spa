@@ -6,7 +6,7 @@ import { pispService } from "../../services/pisp/pisp";
 import Spinner from "../../components/spinner/spinner";
 import TextInput from "../../components/text-input/text-input";
 import Select from "../../components/select/select";
-import DateChooser from "../../components/date-picker/date-picker";
+import DateChooser from "../../components/date-picker/date-chooser";
 import { formatter } from "../../helpers/formatter/formatter";
 
 export default class PaymentView extends React.Component {
@@ -61,7 +61,7 @@ export default class PaymentView extends React.Component {
             remittanceInformation: '',
             debtorIBAN: null,
             paymentType: this.paymentTypesOptions[0],
-            requestedExecutionDate: new Date(),
+            requestedExecutionDate: null,
             frequency: this.frequencyOptions[0],
             numberOfOccurrences: '',
             dayOfExecution: '01',
@@ -181,7 +181,7 @@ export default class PaymentView extends React.Component {
                             label="Type"
                             required
                             onChange={val => {
-                                this.setState({paymentType: val, currency: this.currencies[0]})
+                                this.setState({paymentType: val, currency: this.currencies[0], requestedExecutionDate: null})
                             }}
                             options={this.paymentTypesOptions}
                             value={paymentType} />
