@@ -27,7 +27,7 @@
     "audit-at-commit"
   ],
   "dependencies": {
-    "luxon": "1.11.2",
+    "luxon": "1.28.1",
     "moment": "2.29.1",
     "prop-types": "15.6.2",
     "query-string": "7.0.0",
