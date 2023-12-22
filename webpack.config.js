@@ -60,9 +60,13 @@ module.exports = {
         })
     ],
     devServer: {
-        publicPath: '/',
+        devMiddleware: {
+            publicPath: '/'
+        },
         historyApiFallback: true,
-        contentBase: path.join(__dirname, "build"),
+        static: {
+            directory: path.join(__dirname, "build")
+        },
         proxy: {
             '/api/**': {
                 target: 'http://localhost:8081/'

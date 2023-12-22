@@ -1,10 +1,11 @@
+import { first } from 'rxjs/operators';
 import { getJson, getText } from '../../helpers/reactive-api-client/reactive-api-client';
 import { authService } from "../auth/auth-service";
 
 class PISPService {
 
     authenticateClient() {
-        return getJson(`/api/payment/auth`, {method: 'POST'})
+        return getJson(`/api/payment/auth`, {method: 'POST'}).pipe(first())
     }
 
     makePayment(body) {
@@ -12,7 +13,7 @@ class PISPService {
             method: 'POST',
             body
         };
-        return getText(`/api/payment/make?brand=${authService.getBrand()}`, options)
+        return getText(`/api/payment/make?brand=${authService.getBrand()}`, options).pipe(first())
     }
 }
 

@@ -1,5 +1,5 @@
 import { getText } from '../../helpers/reactive-api-client/reactive-api-client';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, first } from 'rxjs/operators';
 import { Subject } from 'rxjs/internal/Subject';
 
 class AuthService {
@@ -18,7 +18,7 @@ class AuthService {
     }
 
     login() {
-        return getText(`http://localhost:8081/api/auth/login`)
+        return getText(`http://localhost:8081/api/auth/login`).pipe(first())
     }
 
     getToken(authorizationCode) {
@@ -26,7 +26,7 @@ class AuthService {
             method: 'POST',
             body: {code: authorizationCode}
         };
-        return getText(`http://localhost:8081/api/auth/token`, options)
+        return getText(`http://localhost:8081/api/auth/token`, options).pipe(first())
             .pipe(
                 map(resp => JSON.parse(resp)),
                 tap((resp) => {

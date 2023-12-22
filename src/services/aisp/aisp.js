@@ -1,5 +1,5 @@
 import { getJson } from '../../helpers/reactive-api-client/reactive-api-client';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { apiService } from "../apis/apis";
 import { authService } from "../auth/auth-service";
 
@@ -11,7 +11,7 @@ class AISPService {
      * @return {Observable} accounts
      */
     getAccounts() {
-        return getJson(`/api/accounts?brand=${authService.getBrand()}`)
+        return getJson(`/api/accounts?brand=${authService.getBrand()}`).pipe(first())
     }
 
     /**
@@ -22,7 +22,7 @@ class AISPService {
     getAccountDetails(account) {
         return apiService.concatRequests(
             this.getBalances(account.resourceId),
-            this.getTransactions(account.resourceId))
+            this.getTransactions(account.resourceId)).pipe(first())
             .pipe(
                 map(data => {
                     account.balances = data[0];
@@ -33,11 +33,11 @@ class AISPService {
     }
 
     getBalances(accountId) {
-        return getJson(`/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`);
+        return getJson(`/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`).pipe(first())
     }
 
     getTransactions(accountId) {
-        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`);
+        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`).pipe(first())
     }
 
 }
