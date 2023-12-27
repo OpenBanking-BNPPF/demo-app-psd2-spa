@@ -24,7 +24,7 @@
     "react-datepicker": "4.25.0",
     "react-dom": "18.2.0",
     "react-router-dom": "6.21.1",
-    "rxjs": "6.6.6"
+    "rxjs": "7.8.1"
   },
   "devDependencies": {
     "@babel/core": "7.23.6",
