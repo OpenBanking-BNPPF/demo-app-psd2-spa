@@ -9,7 +9,7 @@ This node js app can be used in order to interact with the open bank sandbox.
 
 ## How to install it ?
 
-We'll consider you already have Node.js installed.  
+We'll consider you already have Node.js v20 installed.  
 
 - install npm packages
 

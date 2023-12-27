@@ -1,5 +1,5 @@
 import { getJson } from '../../helpers/reactive-api-client/reactive-api-client';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { apiService } from "../apis/apis";
 import { authService } from "../auth/auth-service";
 
@@ -33,11 +33,11 @@ class AISPService {
     }
 
     getBalances(accountId) {
-        return getJson(`/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`);
+        return getJson(`/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`)
     }
 
     getTransactions(accountId) {
-        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`);
+        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`)
     }
 
 }

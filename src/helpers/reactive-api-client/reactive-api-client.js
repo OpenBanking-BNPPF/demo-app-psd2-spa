@@ -1,5 +1,5 @@
 import { ajax } from 'rxjs/ajax';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 
 export class ReactiveApiClient {
 
@@ -14,7 +14,7 @@ export class ReactiveApiClient {
         if (accessToken) {
             options.headers['Authorization'] = `Bearer ${accessToken}`;
         }
-        return ajax(options).pipe(
+        return ajax(options).pipe(first()).pipe(
             map(data => data.response)
         )
     }

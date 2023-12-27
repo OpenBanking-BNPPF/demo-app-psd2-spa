@@ -1,42 +1,26 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import React, { useEffect, useState  } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { aispService } from "../../services/aisp/aisp";
-import { apiService } from "../../services/apis/apis";
-import { formatter } from "../../helpers/formatter/formatter";
-import Spinner from "../../components/spinner/spinner";
+import { aispService } from "../../services/aisp/aisp"
+import { apiService } from "../../services/apis/apis"
+import { formatter } from "../../helpers/formatter/formatter"
+import Spinner from "../../components/spinner/spinner"
 
-export default class AccountsView extends React.Component {
+const AccountsView = () => {
+    const navigate = useNavigate()
 
-    constructor() {
-        super();
-        this.state = {
-            isLoading: true,
-            loadingMessage: '',
-            loadingError: ''
-        };
-    }
+    const [isLoading, setIsLoading] = useState(false)
+    const [loadingMessage, setLoadingMessage] = useState('')
+    const [loadingError, setLoadingError] = useState('')
+    const [accounts, setAccounts] = useState([])
 
-    componentWillMount() {
-        this.init()
-    }
+    useEffect(() => loadAccountsInfo(), [])
 
-    componentWillUnmount() {
-        if (this.getAccountsSubscription) this.getAccountsSubscription.unsubscribe()
-        if (this.getAccountsDetailsSub) this.getAccountsDetailsSub.unsubscribe()
-    }
-
-    init() {
-        this.loadAccountsInfo()
-    }
-
-    loadAccountsInfo() {
-        this.setState({
-            isLoading: true,
-            loadingMessage: 'loading accounts information',
-            loadingError: ''
-        })
-        this.getAccountsSubscription = aispService.getAccounts().subscribe(
+    const loadAccountsInfo = () => {
+        setIsLoading(true)
+        setLoadingMessage('loading accounts information')
+        setLoadingError('')
+        aispService.getAccounts().subscribe(
             accounts => {
                 const requests = [];
                 if (accounts && accounts.length > 0) {
@@ -44,52 +28,44 @@ export default class AccountsView extends React.Component {
                         requests.push(
                             aispService.getAccountDetails(account)
                         )
-                    });
-                    this.getAccountsDetailsSub = apiService.concatRequests(...requests).subscribe(
+                    })
+                    apiService.concatRequests(...requests).subscribe(
                         accountsDetails => {
-                            this.accounts = accountsDetails;
-                            this.setState({
-                                isLoading: false,
-                                loadingMessage: ''
-                            })
+                            setAccounts(accountsDetails)
+                            setIsLoading(false)
+                            setLoadingMessage('')
                         },
                         err => {
                             if (err.response && err.response.status === 401) {
-                                this.redirect('/login')
+                                redirect('/login')
                             } else {
                                 console.error(err);
-                                this.setState({
-                                    isLoading: false,
-                                    loadingMessage: '',
-                                    loadingError: 'Error fetching account details'
-                                })
+                                setIsLoading(false)
+                                setLoadingMessage('')
+                                setLoadingError('Error fetching account details')
                             }
                         }
                     )
                 } else {
-                    this.setState({
-                        isLoading: false,
-                        loadingMessage: '',
-                        loadingError: 'Found no accounts!'
-                    })
+                    setIsLoading(false)
+                    setLoadingMessage('')
+                    setLoadingError('Found no accounts!')
                 }
             },
             err => {
                 if (err.response && err.response.status === 401) {
-                    this.redirect('/login')
+                    redirect('/login')
                 } else {
                     console.error(err);
-                    this.setState({
-                        isLoading: false,
-                        loadingMessage: '',
-                        loadingError: 'Failed to load accounts'
-                    })
+                    setIsLoading(false)
+                    setLoadingMessage('')
+                    setLoadingError('Failed to load accounts')
                 }
             }
         )
     }
 
-    renderAccountItem(account) {
+    const renderAccountItem = (account) => {
         return (
             <div className="account-box">
                 <div className="account-info">
@@ -119,19 +95,19 @@ export default class AccountsView extends React.Component {
         )
     }
 
-    renderView() {
+    const renderView = () => {
         return (
             <div id="account-info-container">
                 <div className="wallet">
                     <h3>Wallet</h3>
                     <ul className="account-list">
                         {
-                            this.accounts.map((account, index) => {
+                            accounts.map((account, index) => {
                                 return (
                                     <li key={index}
                                         className="account-list-item"
-                                        onClick={this.redirect.bind(this, `/transactions/${account.resourceId}`)}>
-                                        {this.renderAccountItem(account)}
+                                        onClick={() => redirect(`/transactions/${account.resourceId}`)}>
+                                        {renderAccountItem(account)}
                                     </li>)
                             })
                         }
@@ -139,12 +115,12 @@ export default class AccountsView extends React.Component {
                 </div>
                 <div id="main-menu">
                     <button className="active"
-                            onClick={this.redirect.bind(this, `/accounts`)}>
+                            onClick={() => redirect(`/accounts`)}>
                         <i className="icofont icofont-bank"/>
                         ACCOUNTS
                     </button>
                     <button
-                        onClick={this.redirect.bind(this, {pathname: `/payment`, state: {accounts: this.accounts}})}>
+                        onClick={() => redirect('/payment', { accounts })}>
                         <i className="icofont icofont-money"/>
                         TRANSFER
                     </button>
@@ -153,23 +129,22 @@ export default class AccountsView extends React.Component {
         )
     }
 
-    redirect(path) {
-        this.props.history.push(path);
+    const redirect = (path, state) => {
+        navigate(path, {state})
     }
 
-    render() {
-        const {isLoading, loadingMessage, loadingError} = this.state;
+    const render = () => {
         if (isLoading) {
             return <Spinner text={loadingMessage}/>
         } else if (loadingError) {
             return <div id="loadingError">{loadingError}</div>
         } else {
-            return this.renderView()
+            return renderView()
         }
     }
+
+    return render()
 }
 
-AccountsView.propTypes = {
-    match: PropTypes.object.isRequired,
-    history: PropTypes.object
-};
+
+export default AccountsView

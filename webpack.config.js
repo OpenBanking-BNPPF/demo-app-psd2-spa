@@ -31,22 +31,11 @@ module.exports = {
             },
             {
                 test: /\.(jpg|png|svg|gif)$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {name: 'assets/[name].[ext]'}
-                }]
+                type: 'asset/resource',
             },
             {
                 test: /\.(woff|woff2|eot|ttf)$/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 8192,
-                            name: 'assets/fonts/[hash].[ext]'
-                        }
-                    }
-                ]
+                type: 'asset/resource',
             },
             {
                 test: /\.json$/,
@@ -60,9 +49,13 @@ module.exports = {
         })
     ],
     devServer: {
-        publicPath: '/',
+        devMiddleware: {
+            publicPath: '/'
+        },
         historyApiFallback: true,
-        contentBase: path.join(__dirname, "build"),
+        static: {
+            directory: path.join(__dirname, "build")
+        },
         proxy: {
             '/api/**': {
                 target: 'http://localhost:8081/'

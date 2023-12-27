@@ -1,3 +1,4 @@
+import { first } from 'rxjs/operators';
 import { getJson, getText } from '../../helpers/reactive-api-client/reactive-api-client';
 import { authService } from "../auth/auth-service";
 

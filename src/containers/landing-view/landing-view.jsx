@@ -1,39 +1,25 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import queryString from 'query-string'
+import React,{useState,useEffect} from 'react'
 
-import { authService } from "../../services/auth/auth-service";
-import Spinner from "../../components/spinner/spinner";
+import { authService } from "../../services/auth/auth-service"
+import Spinner from "../../components/spinner/spinner"
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
-export default class LandingView extends React.Component {
+const LandingView = () => {
+    const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
+    const [isLoading, setIsLoading] = useState(true)
 
-    constructor() {
-        super();
-        this.state = {
-            isLoading: true
-        }
-    }
-
-    redirect(path) {
-        this.props.history.push(path);
-    }
-
-    componentWillMount() {
-        const authorizationCode = queryString.parse(this.props.location.search).code;
+    useEffect(() => {
+        const authorizationCode = searchParams.get('code')
         authService.getToken(authorizationCode).subscribe(
             () => {
-                this.setState({isLoading: false});
-                this.redirect('/accounts')
+                setIsLoading(false)
+                navigate('/accounts')
             }
         )
-    }
+    }, [])
 
-    render() {
-        return <Spinner text="Requesting Token..."/>
-    }
+    return isLoading && <Spinner text="Requesting Token..."/>
 }
 
-LandingView.propTypes = {
-    match: PropTypes.object.isRequired,
-    history: PropTypes.object
-};
+export default LandingView

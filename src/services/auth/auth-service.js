@@ -1,5 +1,5 @@
 import { getText } from '../../helpers/reactive-api-client/reactive-api-client';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, first } from 'rxjs/operators';
 import { Subject } from 'rxjs/internal/Subject';
 
 class AuthService {
