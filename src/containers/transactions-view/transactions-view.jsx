@@ -1,76 +1,56 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react'
 
 import { aispService } from "../../services/aisp/aisp";
 import { formatter } from "../../helpers/formatter/formatter";
 import Spinner from "../../components/spinner/spinner";
 import SearchBox from "../../components/search-box/search-box";
 import { Highlight } from "../../components/highlight/highlight";
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default class TransactionsView extends React.Component {
+const TransactionsView = () => {
+    const navigate = useNavigate()
+    const { accountId } = useParams();
 
-    constructor() {
-        super();
-        this.state = {
-            isLoading: true,
-            loadingMessage: '',
-            loadingError: '',
-            searchTerm: '',
-            filteredItems: [],
-        }
-    }
+    const [isLoading, setIsLoading] = useState(true)
+    const [loadingMessage, setLoadingMessage] = useState('')
+    const [loadingError, setLoadingError] = useState('')
+    const [searchTerm, setSearchTerm] = useState('')
+    const [filteredItems, setFilteredItems] = useState([])
+    const [transactions, setTransactions] = useState([])
 
-    componentWillUnmount() {
-        if (this.getTransactionsSub) this.getTransactionsSub.unsubscribe();
-    }
 
-    componentWillMount() {
-        this.accountId = this.props.match.params.accountId;
-        this.init()
-    }
+    useEffect(() => {
+        loadTransactions()
+    }, [])
 
-    init() {
-        this.loadTransactions()
-    }
 
-    loadTransactions() {
-        this.setState({
-            isLoading: true,
-            loadingMessage: 'loading transactions',
-            loadingError: ''
-        });
-        this.getTransactionsSub = aispService.getTransactions(this.accountId).subscribe(
-            transactions => {
-                this.transactions = transactions;
-                this.transactions.sort((t1, t2) => t2.bookingDate.localeCompare(t1.bookingDate));
-                this.setState({ filteredItems: this.transactions });
+    const loadTransactions = () => {
+        setIsLoading(true)
+        setLoadingMessage('loading transactions')
+        setLoadingError('')
+        aispService.getTransactions(accountId).subscribe(
+            trxs => {
+                const transactions = trxs.sort((t1, t2) => t2.bookingDate.localeCompare(t1.bookingDate))
+                setTransactions(transactions)
+                setFilteredItems(transactions)
 
-                this.setState({
-                    isLoading: false,
-                    loadingMessage: '',
-                })
+                setIsLoading(false)
+                setLoadingMessage('')
             },
             err => {
                 if (err.response && err.response.status === 401) {
-                    this.redirect('/login')
+                    navigate('/login')
                 } else {
-                    console.error(err);
-                    this.setState({
-                        isLoading: false,
-                        loadingMessage: '',
-                        loadingError: 'Failed to load transactions!'
-                    })
+                    console.error(err)
+                    setIsLoading(false)
+                    setLoadingMessage('')
+                    setLoadingError('Failed to load transactions!')
                 }
             }
         )
     }
 
-    redirect(path) {
-        this.props.history.push(path);
-    }
-
-    renderTransaction(item) {
-        const { searchTerm } = this.state;
+    const renderTransaction = (item) => {
         let remittanceInformation
         if (item.remittanceInformation.unstructured) {
             remittanceInformation = item.remittanceInformation.unstructured[0]
@@ -102,35 +82,32 @@ export default class TransactionsView extends React.Component {
         )
     }
 
-    freeSearch(term) {
-        this.setState({
-            searchTerm: term
-        });
+    const freeSearch = (term) => {
+        setSearchTerm(term)
         if (term.trim() === '') {
-            this.setState({ filteredItems: this.transactions });
+            setFilteredItems(transactions)
         } else {
-            const filteredItems = this.transactions.filter(
+            const filteredItems = transactions.filter(
                 item => {
                     return item.transactionAmount.amount.indexOf(term) > -1
                         || item.remittanceInformation.unstructured[0].toLowerCase().indexOf(term.toLowerCase()) > -1
                         || item.entryReference.toLowerCase().indexOf(term.toLowerCase()) > -1
                 });
-            this.setState({ filteredItems: filteredItems });
+            setFilteredItems(filteredItems)
         }
     }
 
-    renderTransactions() {
-        const { filteredItems, searchTerm } = this.state;
-        if (this.transactions && this.transactions.length > 0) {
+    const renderTransactions = () => {
+        if (transactions && transactions.length > 0) {
             return (
                 <div className="transactions-view">
                     <SearchBox value={searchTerm}
                         placeholder="filter transactions"
-                        handleClear={() => this.setState({
-                            searchTerm: '',
-                            filteredItems: this.transactions
-                        })}
-                        handleChange={(e) => this.freeSearch(e.target.value)} />
+                        handleClear={() => {
+                            setSearchTerm('')
+                            setFilteredItems(transactions)
+                        }}
+                        handleChange={(e) => freeSearch(e.target.value)} />
                     <div className="my-transactions">
                         <i className="icofont icofont-exchange" />
                         My Transactions {` (${filteredItems.length})`}
@@ -140,7 +117,7 @@ export default class TransactionsView extends React.Component {
                             filteredItems.map((item, index) => {
                                 return (
                                     <li key={index}>
-                                        {this.renderTransaction(item)}
+                                        {renderTransaction(item)}
                                     </li>
                                 )
                             })
@@ -153,39 +130,35 @@ export default class TransactionsView extends React.Component {
         }
     }
 
-    renderContent() {
-        const { isLoading, loadingMessage, loadingError } = this.state;
+    const renderContent = () => {
         if (isLoading) {
             return <Spinner text={loadingMessage} />
         } else if (loadingError) {
             return <div id="loadingError">{loadingError}</div>
         } else {
-            return this.renderTransactions()
+            return renderTransactions()
         }
     }
 
-    renderView() {
+    const renderView = () => {
         return (
             <div id="transactions-container">
                 <div className="box-content">
                     <div className="box-header">
-                        <button className="back-btn" onClick={this.redirect.bind(this, '/accounts')}><i
-                            className="icofont icofont-reply"/></button>
+                        <button className="back-btn" onClick={() => navigate('/accounts')}>
+                            <i className="icofont icofont-reply"/>
+                        </button>
                         <h3>
-                            {formatter.formatIBAN(this.accountId.substring(0, this.accountId.length - 3))}
+                            {formatter.formatIBAN(accountId.substring(0, accountId.length - 3))}
                         </h3>
                     </div>
-                    {this.renderContent()}
+                    {renderContent()}
                 </div>
             </div>
         )
     }
 
-    render() {
-        return this.renderView()
-    }
+    return renderView()
 }
-TransactionsView.propTypes = {
-    match: PropTypes.object.isRequired,
-    history: PropTypes.object
-};
+
+export default TransactionsView

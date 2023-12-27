@@ -1,14 +1,10 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export default class PaymentSuccessView extends React.Component {
+const PaymentSuccessView = () => {
+    const navigate = useNavigate()
 
-    redirect(path) {
-        this.props.history.push(path);
-    }
-
-    render() {
-        return (
+    return (
             <div id="payment-container">
                 <div className="box-content success">
                     <i className="icofont icofont-emo-simple-smile"/>
@@ -16,16 +12,12 @@ export default class PaymentSuccessView extends React.Component {
                         Your payment has been requested successfully
                     </h4>
                     <button className="back-btn"
-                            onClick={this.redirect.bind(this, '/accounts')}>
+                            onClick={() => navigate('/accounts')}>
                         <i className="icofont icofont-reply"/>
                     </button>
                 </div>
             </div>
         )
-    }
 }
 
-PaymentSuccessView.propTypes = {
-    match: PropTypes.object.isRequired,
-    history: PropTypes.object
-};
+export default PaymentSuccessView

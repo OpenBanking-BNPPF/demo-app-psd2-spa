@@ -1,49 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from "react-datepicker";
 
-export default class DateChooser extends React.Component {
+const DateChooser = ({value, id, label, dateFormat, required, labelStyle, onChange}) => {
 
-    constructor() {
-        super()
-        this.state = {selectedDate: null};
-    }
-
-    componentDidMount() {
-        const {value} = this.props
-        this.setState({selectedDate: value})
-    }
-
-    componentWillReceiveProps(newProps) {
-        this.setState({selectedDate: newProps.value})
-    }
-
-    handleFocus() {
+    const handleFocus = () => {
         const pickerLabel = document.querySelector('.date-label')
-        console.log('focus', pickerLabel)
         if (pickerLabel) {
             pickerLabel.classList.remove('empty')
         }
     }
 
-    render() {
-        const {selectedDate} = this.state
-        const {id, label, dateFormat, required, labelStyle, onChange} = this.props
+    const render = () => {
         return (
             <div className="date-chooser">
                 <DatePicker
                     id={id}
                     dateFormat={dateFormat}
-                    selected={selectedDate}
+                    selected={value}
                     autoComplete="off"
                     onChange={date => onChange(date)}
-                    onFocus={this.handleFocus}
+                    onFocus={handleFocus}
                 />
-                <label id={`label-${id}`} htmlFor={id} className={`date-label ${selectedDate ? '' : 'empty'}`} style={labelStyle}>{label} {required ? '*' : ''}</label>
+                <label id={`label-${id}`} htmlFor={id} className={`date-label ${value ? '' : 'empty'}`} style={labelStyle}>{label} {required ? '*' : ''}</label>
             </div>
         )
     }
+
+    return render()
 }
+
+export default DateChooser
 
 DateChooser.propTypes = {
     id: PropTypes.string.isRequired,

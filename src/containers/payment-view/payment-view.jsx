@@ -1,139 +1,85 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useEffect, useState } from 'react'
+import "react-datepicker/dist/react-datepicker.css"
 
-import { pispService } from "../../services/pisp/pisp";
-import Spinner from "../../components/spinner/spinner";
-import TextInput from "../../components/text-input/text-input";
-import Select from "../../components/select/select";
-import DateChooser from "../../components/date-picker/date-chooser";
-import { formatter } from "../../helpers/formatter/formatter";
+import { pispService } from "../../services/pisp/pisp"
+import Spinner from "../../components/spinner/spinner"
+import TextInput from "../../components/text-input/text-input"
+import Select from "../../components/select/select"
+import DateChooser from "../../components/date-picker/date-chooser"
+import { formatter } from "../../helpers/formatter/formatter"
+import { useLocation, useNavigate } from 'react-router-dom'
 
-export default class PaymentView extends React.Component {
+const PaymentView = () => {
+    const navigate = useNavigate()
+    const location = useLocation()
 
-    constructor() {
-        super();
-        this.frequencyOptions = Object.entries({
-            'WEEK': 'Weekly',
-            'TOWK': 'Every 2 weeks',
-            'MNTH': 'Monthly',
-            'TOMN': 'Every 2 months',
-            'QUTR': 'Quarterly',
-            'SEMI': 'Every 6 months',
-            'YEAR': 'Yearly',
-        }).map(([type, typeLabel]) => {
-            return {
-                label: typeLabel,
-                value: type
-            }
-        })
-        this.currencies = Object.entries({
-            'EUR': 'Euro',
-            'USD': 'US Dollar',
-        }).map(([iso, label]) => {
-            return {
-                label: label,
-                value: iso
-            }
-        })
-        this.paymentTypesOptions = Object.entries({
-            'SEPA': 'SEPA',
-            'SEPA-INST': 'Instant',
-            'SEPA-FUTURE': 'Future',
-            'SEPA-STO': 'Standing Order',
-            'INTP': 'International payment',
-        }).map(([type, typeLabel]) => {
-            return {
-                label: typeLabel,
-                value: type
-            }
-        })
+    const [isLoading, setIsLoading] = useState(true)
+    const [loadingMessage, setLoadingMessage] = useState('')
+    const [loadingError, setLoadingError] = useState('')
+    const [access_token, set_access_token] = useState()
+    const [beneficiaryName, setBeneficiaryName] = useState('')
+    const [beneficiaryAccount, setBeneficiaryAccount] = useState('')
+    const [remittanceInformation, setRemittanceInformation] = useState('')
+    const [amount, setAmount] = useState('')
+    const [debtorIBAN, setDebtorIBAN] = useState()
+    const [requestedExecutionDate, setRequestedExecutionDate] = useState()
+    const [numberOfOccurrences, setNumberOfOccurrences] = useState('')
+    const [dayOfExecution, setDayOfExecution] = useState('01')
+    const [currency, setCurrency] = useState(currencies[0])
+    const [paymentType, setPaymentType] = useState(paymentTypesOptions[0])
+    const [frequency, setFrequency] = useState(frequencyOptions[0])
+    const [accounts, setAccounts] = useState([])
+    const [accountOptions, setAccountOptions] = useState([])
 
-        this.state = {
-            isLoading: true,
-            loadingMessage: '',
-            loadingError: '',
-            access_token: null,
-            beneficiaryName: '',
-            beneficiaryAccount: '',
-            amount: '',
-            currency: this.currencies[0],
-            remittanceInformation: '',
-            debtorIBAN: null,
-            paymentType: this.paymentTypesOptions[0],
-            requestedExecutionDate: null,
-            frequency: this.frequencyOptions[0],
-            numberOfOccurrences: '',
-            dayOfExecution: '01',
-        };
-        this.makePayment = this.makePayment.bind(this)
-        this.onFrequencyChange = this.onFrequencyChange.bind(this)
-    }
+    useEffect(() => {
+        authenticateClient()
+    }, [])
 
-    componentDidMount() {
-        this.init()
-    }
+    useEffect(() => {
+        initAccounts()
+    }, [])
 
-    componentWillUnmount() {
-        if (this.authenticateClientSub) this.authenticateClientSub.unsubscribe()
-        if (this.makePaymentSub) this.makePaymentSub.unsubscribe()
-    }
-
-    init() {
-        this.initAccounts()
-        this.authenticateClient()
-    }
-
-    initAccounts() {
-        this.accounts = this.props.location.state.accounts;
-        this.accountOptions = this.accounts.map(acc => {
+    const initAccounts = () => {
+        const accounts = location.state.accounts
+        const accountOptions = accounts.map(acc => {
             return {
                 label: `${formatter.formatIBAN(acc.accountId.iban)}   -   ( ${formatter.formatAmount(+acc.balances[0].balanceAmount.amount)}EUR )`,
                 value: acc.accountId.iban
             }
         })
-        if (this.accountOptions.length === 1) {
-            this.setState({debtorIBAN: this.accountOptions[0]})
+        if (accountOptions.length === 1) {
+            setDebtorIBAN(accountOptions[0])
         }
+        setAccounts(accounts)
+        setAccountOptions(accountOptions)
     }
 
-    authenticateClient() {
-        this.setState({
-            isLoading: true,
-            loadingMessage: 'getting client token',
-            loadingError: ''
-        });
-        this.authenticateClientSub = pispService.authenticateClient().subscribe(
+    const authenticateClient = () => {
+        setIsLoading(true)
+        setLoadingMessage('getting client token')
+        setLoadingError('')
+        
+        pispService.authenticateClient().subscribe(
             res => {
-                this.setState({
-                    isLoading: false,
-                    loadingMessage: '',
-                    access_token: res.access_token
-                })
+                setIsLoading(false)
+                setLoadingMessage('')
+                set_access_token(res.access_token)
             },
             err => {
                 if (err.response && err.response.status === 401) {
-                    this.redirect('/login')
+                    navigate('/login')
                 } else {
-                    console.error(err);
-                    this.setState({
-                        isLoading: false,
-                        loadingMessage: '',
-                        loadingError: 'Failed to Authenticate!'
-                    })
+                    console.error(err)
+                    setIsLoading(false)
+                    setLoadingMessage('')
+                    setLoadingError('Failed to Authenticate!')
                 }
             }
         )
     }
 
-    makePayment() {
-        const {
-            access_token, beneficiaryName, beneficiaryAccount,
-            amount, remittanceInformation, debtorIBAN, paymentType,
-            requestedExecutionDate, frequency, numberOfOccurrences,
-            dayOfExecution, currency,
-        } = this.state;
-        this.makePaymentSub = pispService.makePayment({
+    const makePayment = () => {
+        pispService.makePayment({
             access_token, beneficiaryName, beneficiaryAccount,
             amount, remittanceInformation, debtorAccount: debtorIBAN.value, paymentType: paymentType.value, currency: currency.value,
             requestedExecutionDate: formatter.formatDate(requestedExecutionDate),
@@ -144,35 +90,28 @@ export default class PaymentView extends React.Component {
             },
             err => {
                 console.error(err)
-                this.props.history.push('/PaymentFailure')
+                navigate('/PaymentFailure', {state: {message: err.response}})
             }
         )
     }
 
-    redirect(path) {
-        this.props.history.push(path);
-    }
-
-    onFrequencyChange(frequency) {
+    const onFrequencyChange =(frequency) => {
         const freqValue = frequency.value
         let dayOfExecution = '01'
         if (!['WEEK', 'TOWK'].includes(freqValue)) {
             dayOfExecution = '31'
         }
-        this.setState({
-            dayOfExecution,
-            frequency
-        })
+        setDayOfExecution(dayOfExecution)
+        setFrequency(frequency)
     }
 
-    renderView() {
-        const { paymentType, currency, frequency, numberOfOccurrences, debtorIBAN, beneficiaryName, beneficiaryAccount, amount, remittanceInformation, requestedExecutionDate } = this.state;
+    const renderView= () => {
         return (
             <div id="payment-container">
                 <div className="box-content">
                     <div className="box-header">
                         <button className="back-btn"
-                            onClick={this.redirect.bind(this, '/accounts')}><i
+                            onClick={() => navigate('/accounts')}><i
                                 className="icofont icofont-reply" /></button>
                         <h3>NEW TRANSFER</h3>
                     </div>
@@ -181,34 +120,32 @@ export default class PaymentView extends React.Component {
                             label="Type"
                             required
                             onChange={val => {
-                                this.setState({paymentType: val, currency: this.currencies[0], requestedExecutionDate: null})
+                                setPaymentType(val)
+                                setCurrency(currencies[0])
+                                setRequestedExecutionDate(null)
                             }}
-                            options={this.paymentTypesOptions}
+                            options={paymentTypesOptions}
                             value={paymentType} />
                         <Select id="from-account"
                             label="From"
                             required
-                            onChange={val => {
-                                this.setState({
-                                    debtorIBAN: val
-                                })
-                            }}
-                            options={this.accountOptions}
+                            onChange={val => setDebtorIBAN(val)}
+                            options={accountOptions}
                             value={debtorIBAN}
                         />
                         {paymentType && ['SEPA-STO'].includes(paymentType.value) && (
                             <Select id="frequency"
                                 label="Frequency"
                                 required
-                                onChange={this.onFrequencyChange}
-                                options={this.frequencyOptions}
+                                onChange={onFrequencyChange}
+                                options={frequencyOptions}
                                 value={frequency} />
                         )}
                         {paymentType && ['SEPA-FUTURE', 'SEPA-STO'].includes(paymentType.value) && (
                             <DateChooser id="requestedExecutionDate"
                                 value={requestedExecutionDate}
                                 required
-                                onChange={(date) => {this.setState({ requestedExecutionDate: date })}}
+                                onChange={date => setRequestedExecutionDate(date)}
                                 dateFormat="yyyy-MM-dd"
                                 label="Request execution date" />
                         )}
@@ -217,54 +154,50 @@ export default class PaymentView extends React.Component {
                                 value={numberOfOccurrences}
                                 type="number"
                                 required
-                                onChange={(val) => this.setState({ numberOfOccurrences: val })}
+                                onChange={val=> setNumberOfOccurrences(val)}
                                 label="#occurences" />
                         )}
                         <TextInput id="beneficiary-name"
                             value={beneficiaryName}
                             required
-                            onChange={(val) => this.setState({ beneficiaryName: val })}
+                            onChange={(val) => setBeneficiaryName(val)}
                             label="beneficiary name" />
                         <TextInput id="beneficiary-account"
                             value={beneficiaryAccount}
                             required
-                            onChange={(val) => this.setState({ beneficiaryAccount: val })}
+                            onChange={(val) => setBeneficiaryAccount(val)}
                             label="beneficiary account" />
                         <TextInput id="amount"
                             value={amount}
                             required
                             type="number"
-                            onChange={(val) => this.setState({ amount: val })}
+                            onChange={(val) => setAmount(val)}
                             label={`amount${paymentType && ['INTP'].includes(paymentType.value) ? '' : ' in euro'}`} />
                         {paymentType && ['INTP'].includes(paymentType.value) && (
                             <Select id="currency"
                                 label="Currency"
                                 required
-                                onChange={val => {
-                                    this.setState({
-                                        currency: val
-                                    })
-                                }}
-                                options={this.currencies}
+                                onChange={val => setCurrency(val)}
+                                options={currencies}
                                 value={currency} />
                         )}
                         <TextInput id="remittanceInformation"
                             required
                             value={remittanceInformation}
-                            onChange={(val) => this.setState({ remittanceInformation: val })}
+                            onChange={(val) => setRemittanceInformation(val)}
                             label="communication" />
                     </form>
                     <button className="make-payment-btn"
-                        disabled={this.isNextButtonDisabled()}
-                        onClick={this.makePayment}>NEXT
+                        disabled={isNextButtonDisabled()}
+                        onClick={makePayment}>
+                            NEXT
                     </button>
                 </div>
             </div>
         )
     }
 
-    isNextButtonDisabled() {
-        const { paymentType, frequency, numberOfOccurrences, debtorIBAN, beneficiaryName, beneficiaryAccount, amount, remittanceInformation, requestedExecutionDate } = this.state;
+    const isNextButtonDisabled = () => {
         let isDisbaled = !debtorIBAN || debtorIBAN.value === '' || beneficiaryName === '' || beneficiaryAccount === '' || amount === '' || remittanceInformation === ''
         if (['SEPA-FUTURE', 'SEPA-STO'].includes(paymentType.value)) {
             isDisbaled = (isDisbaled || !requestedExecutionDate || requestedExecutionDate === '')
@@ -275,20 +208,56 @@ export default class PaymentView extends React.Component {
         return isDisbaled
     }
 
-    render() {
-        const { isLoading, loadingMessage, loadingError } = this.state;
+    const render = () => {
         if (isLoading) {
             return <Spinner text={loadingMessage} />
         } else if (loadingError) {
             return <div id="loadingError">{loadingError}</div>
         } else {
-            return this.renderView()
+            return renderView()
         }
     }
 
+    return render()
+
 }
 
-PaymentView.propTypes = {
-    match: PropTypes.object.isRequired,
-    history: PropTypes.object
-};
+const frequencyOptions = Object.entries({
+    'WEEK': 'Weekly',
+    'TOWK': 'Every 2 weeks',
+    'MNTH': 'Monthly',
+    'TOMN': 'Every 2 months',
+    'QUTR': 'Quarterly',
+    'SEMI': 'Every 6 months',
+    'YEAR': 'Yearly',
+}).map(([type, typeLabel]) => {
+    return {
+        label: typeLabel,
+        value: type
+    }
+})
+
+const currencies = Object.entries({
+    'EUR': 'Euro',
+    'USD': 'US Dollar',
+}).map(([iso, label]) => {
+    return {
+        label: label,
+        value: iso
+    }
+})
+
+const paymentTypesOptions = Object.entries({
+    'SEPA': 'SEPA',
+    'SEPA-INST': 'Instant',
+    'SEPA-FUTURE': 'Future',
+    'SEPA-STO': 'Standing Order',
+    'INTP': 'International payment',
+}).map(([type, typeLabel]) => {
+    return {
+        label: typeLabel,
+        value: type
+    }
+})
+
+export default PaymentView

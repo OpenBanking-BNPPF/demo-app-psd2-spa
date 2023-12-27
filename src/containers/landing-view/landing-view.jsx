@@ -1,5 +1,4 @@
 import React,{useState,useEffect} from 'react'
-import PropTypes from 'prop-types'
 
 import { authService } from "../../services/auth/auth-service"
 import Spinner from "../../components/spinner/spinner"
@@ -24,7 +23,3 @@ const LandingView = () => {
 }
 
 export default LandingView
-
-LandingView.propTypes = {
-    match: PropTypes.object.isRequired
-};

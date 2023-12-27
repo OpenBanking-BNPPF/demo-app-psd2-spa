@@ -120,7 +120,7 @@ const AccountsView = () => {
                         ACCOUNTS
                     </button>
                     <button
-                        onClick={() => redirect({pathname: `/payment`, state: {accounts: this.accounts}})}>
+                        onClick={() => redirect('/payment', { accounts })}>
                         <i className="icofont icofont-money"/>
                         TRANSFER
                     </button>
@@ -129,8 +129,8 @@ const AccountsView = () => {
         )
     }
 
-    const redirect = (path) => {
-        navigate(path)
+    const redirect = (path, state) => {
+        navigate(path, {state})
     }
 
     const render = () => {

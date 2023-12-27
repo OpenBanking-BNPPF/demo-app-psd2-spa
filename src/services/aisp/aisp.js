@@ -11,7 +11,7 @@ class AISPService {
      * @return {Observable} accounts
      */
     getAccounts() {
-        return getJson(`/api/accounts?brand=${authService.getBrand()}`).pipe(first())
+        return getJson(`/api/accounts?brand=${authService.getBrand()}`)
     }
 
     /**
@@ -22,7 +22,7 @@ class AISPService {
     getAccountDetails(account) {
         return apiService.concatRequests(
             this.getBalances(account.resourceId),
-            this.getTransactions(account.resourceId)).pipe(first())
+            this.getTransactions(account.resourceId))
             .pipe(
                 map(data => {
                     account.balances = data[0];
@@ -33,11 +33,11 @@ class AISPService {
     }
 
     getBalances(accountId) {
-        return getJson(`/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`).pipe(first())
+        return getJson(`/api/accounts/balances?accountResourceId=${accountId}&brand=${authService.getBrand()}`)
     }
 
     getTransactions(accountId) {
-        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`).pipe(first())
+        return getJson(`/api/accounts/transactions?accountResourceId=${accountId}&brand=${authService.getBrand()}`)
     }
 
 }

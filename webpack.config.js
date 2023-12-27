@@ -31,22 +31,11 @@ module.exports = {
             },
             {
                 test: /\.(jpg|png|svg|gif)$/,
-                use: [{
-                    loader: 'file-loader',
-                    options: {name: 'assets/[name].[ext]'}
-                }]
+                type: 'asset/resource',
             },
             {
                 test: /\.(woff|woff2|eot|ttf)$/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 8192,
-                            name: 'assets/fonts/[hash].[ext]'
-                        }
-                    }
-                ]
+                type: 'asset/resource',
             },
             {
                 test: /\.json$/,

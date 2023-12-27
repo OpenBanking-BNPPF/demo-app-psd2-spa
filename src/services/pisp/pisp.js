@@ -5,7 +5,7 @@ import { authService } from "../auth/auth-service";
 class PISPService {
 
     authenticateClient() {
-        return getJson(`/api/payment/auth`, {method: 'POST'}).pipe(first())
+        return getJson(`/api/payment/auth`, {method: 'POST'})
     }
 
     makePayment(body) {
@@ -13,7 +13,7 @@ class PISPService {
             method: 'POST',
             body
         };
-        return getText(`/api/payment/make?brand=${authService.getBrand()}`, options).pipe(first())
+        return getText(`/api/payment/make?brand=${authService.getBrand()}`, options)
     }
 }
 

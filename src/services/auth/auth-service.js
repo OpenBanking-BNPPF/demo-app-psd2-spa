@@ -18,7 +18,7 @@ class AuthService {
     }
 
     login() {
-        return getText(`http://localhost:8081/api/auth/login`).pipe(first())
+        return getText(`http://localhost:8081/api/auth/login`)
     }
 
     getToken(authorizationCode) {
@@ -26,7 +26,7 @@ class AuthService {
             method: 'POST',
             body: {code: authorizationCode}
         };
-        return getText(`http://localhost:8081/api/auth/token`, options).pipe(first())
+        return getText(`http://localhost:8081/api/auth/token`, options)
             .pipe(
                 map(resp => JSON.parse(resp)),
                 tap((resp) => {
