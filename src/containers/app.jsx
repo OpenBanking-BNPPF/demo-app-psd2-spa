@@ -9,7 +9,7 @@ import PaymentView from "./payment-view/payment-view";
 import PaymentSuccessView from "./payment-success-view/payment-success-view";
 import PaymentFailureView from "./payment-failure-view/payment-failure-view";
 
-import '../static/cool-background.png';
+import logoBack from '../static/cool-background.png';
 
 const App = () => {
 
@@ -33,7 +33,7 @@ const App = () => {
     }
 
     return (
-            <div id="main-container" style={{backgroundImage: "url('./assets/cool-background.png')"}}>
+            <div id="main-container" style={{backgroundImage: `url(${logoBack})`}}>
                 <div className="ob-title">OPEN<span className="green">BANK</span></div>
                 {initRoutes()}
             </div>
